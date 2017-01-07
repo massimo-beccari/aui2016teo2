@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 import teo2sm.AppRefs;
 import teo2sm.Constants;
-import teo2sm.model.InvalidOperationException;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
 //import teo2sm.view.CLI;
@@ -44,9 +43,8 @@ public class ScenarioFileManager {
 		mode = Constants.WRITE;
 	}
 	
-	public ScenarioData getScenario() throws InvalidOperationException {
-		if(mode == Constants.WRITE)
-			throw new InvalidOperationException();
+	//WARNING: call this method only in LOAD mode
+	public ScenarioData getScenario() {
 		//loading code
 		RandomAccessFile file;
 		try {
@@ -81,9 +79,8 @@ public class ScenarioFileManager {
 		return scenario;
 	}
 	
-	public boolean saveFile() throws InvalidOperationException {
-		if(mode == Constants.LOAD)
-			throw new InvalidOperationException();
+	//WARNING: call this method only in WRITE mode
+	public boolean saveFile() {
 		//saving code
 		File file = new File(filePath);
         try {
@@ -107,6 +104,10 @@ public class ScenarioFileManager {
 			return false;
 		}
 		return true;
+	}
+
+	public int getMode() {
+		return mode;
 	}
 	
 	/*test main
