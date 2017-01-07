@@ -1,4 +1,4 @@
-package teo2sm.model;
+package teo2sm;
 
 public class Constants {
 	public static final int LOAD = 1;

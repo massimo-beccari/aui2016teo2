@@ -1,16 +1,19 @@
 package teo2sm.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
 
 import teo2sm.AppRefs;
-import teo2sm.model.Constants;
+import teo2sm.Constants;
 import teo2sm.model.InvalidOperationException;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
-import teo2sm.view.CLI;
+//import teo2sm.view.CLI;
 
 public class ScenarioFileManager {
 	private AppRefs app;
@@ -64,6 +67,7 @@ public class ScenarioFileManager {
 				scene.setRfidObjectTag(s.next());
 				in = file.readLine();
 				//TODO lettura azioni teo
+				s.close();
 				scenario.getScenes().add(scene);
 				in = file.readLine();
 			}
@@ -71,34 +75,44 @@ public class ScenarioFileManager {
 		} catch (FileNotFoundException e) {
 			app.getUI().showFileNotFound(filePath);
 		} catch (IOException e) {
-			System.err.println("Errore lettura stringa in caricamento scenari");
+			System.err.println("Errore lettura stringa in caricamento scenario");
 			e.printStackTrace();
 		}
 		return scenario;
 	}
 	
-	public RandomAccessFile getFileSaved() throws InvalidOperationException {
+	public boolean saveFile() throws InvalidOperationException {
 		if(mode == Constants.LOAD)
 			throw new InvalidOperationException();
 		//saving code
-		RandomAccessFile file = null;
-		try {
-			file = new RandomAccessFile(filePath, "w");
-			if (file != null) {
-				
-			} else if (file == null) {
-	        	
-	        } else
-	            System.out.println("Il file non può essere creato");
+		File file = new File(filePath);
+        try {
+        	FileWriter fw = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(fw);;
+			bw.write(scenario.getTitle());
+			bw.newLine();
+			for(SceneData scene : scenario.getScenes()) {
+				bw.write(scene.getStoryPath()+" ");
+				bw.write(scene.getBackgroundMusicPath()+" ");
+				bw.write(scene.getProjectedContentPath()+" ");
+				bw.write(scene.getRfidObjectTag());
+				bw.newLine();
+				//TODO scrittura azioni teo
+			}
+			bw.flush();
+			bw.close();
 	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-		return file;
+	    	System.err.println("Errore scrittura stringa in salvataggio scenario");
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
-	/*test main*/
+	/*test main
 	public static void main(String[] args) {
 		AppRefs app = new AppRefs(new CLI());
+		//test load
 		ScenarioFileManager sfm = new ScenarioFileManager(app, "C:\\Users\\Max\\test.txt");
 		try {
 			ScenarioData sc = sfm.getScenario();
@@ -118,5 +132,27 @@ public class ScenarioFileManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+		//test write
+		ScenarioData sc2 = new ScenarioData();
+		sc2.setTitle("prova_titolo");
+		SceneData scene2 = new SceneData();
+		scene2.setStoryPath("C:\\percorso\\story");
+		scene2.setBackgroundMusicPath("C:\\percorso\\music");
+		scene2.setProjectedContentPath("C:\\percorso\\multimedia");
+		scene2.setRfidObjectTag("123456");
+		sc2.getScenes().add(scene2);
+		scene2 = new SceneData();
+		scene2.setStoryPath("C:\\percorso\\story2");
+		scene2.setBackgroundMusicPath("C:\\percorso\\music2");
+		scene2.setProjectedContentPath("C:\\percorso\\multimedia2");
+		scene2.setRfidObjectTag("987654");
+		sc2.getScenes().add(scene2);
+		sfm = new ScenarioFileManager(app, sc2, "C:\\Users\\Max\\test2.txt");
+		try {
+			sfm.saveFile();
+		} catch (InvalidOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
 }

@@ -7,4 +7,8 @@ public class CLI implements UserInterface {
 		System.out.println("Error: file " + filePath + " not found");
 	}
 
+	@Override
+	public void showCannotCreateFile(String filePath) {
+		System.out.println("Error: file " + filePath + " cannot be created");
+	}
 }
