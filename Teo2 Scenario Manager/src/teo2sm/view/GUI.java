@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
@@ -28,13 +29,13 @@ public class GUI implements UserInterface, Runnable {
 	private Container contentPane;
 	private SpringLayout layout;
 	private JMenuBar menuBar;
+	private MenuHandler menuHandler;
 	private MainToolBar toolBar;
 	private JMenu menuFile;
-	private JMenuItem menuItem;
 	
 	public GUI() {
-		userBool = false;
-		userInt = 0;
+		userBool = true;
+		userInt = Constants.DEFAULT_USERINT_VALUE;
 		mainFrame = new JFrame("Teo2 Scenario Manager");
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layout = new SpringLayout();
@@ -59,30 +60,33 @@ public class GUI implements UserInterface, Runnable {
 	
 	private void setupMenuBar() {
 		menuBar = new JMenuBar();
+		menuHandler = new MenuHandler(this);
 		//file menu
 		menuFile = new JMenu("File");
-		menuFile.setMnemonic(KeyEvent.VK_A);
+		menuFile.setMnemonic(KeyEvent.VK_F);
 		menuFile.getAccessibleContext().setAccessibleDescription(
 		        "File");
 		menuBar.add(menuFile);
 		
 		//file/new
-		menuItem = new JMenuItem("New Scenario",
-                KeyEvent.VK_T);
+		JMenuItem menuItem = new JMenuItem("New Scenario",
+                KeyEvent.VK_N);
 		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"Create a new scenario");
 		menuFile.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
 		
 		//file/load
 		menuItem = new JMenuItem("Open Scenario...",
-                KeyEvent.VK_T);
+                KeyEvent.VK_O);
 		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
 				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
 		menuItem.getAccessibleContext().setAccessibleDescription(
 				"Open an existing scenario");
 		menuFile.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
 		
 		/*menuItem = new JMenuItem("Both text and icon",
 		                new ImageIcon("images/middle.gif"));
@@ -93,6 +97,7 @@ public class GUI implements UserInterface, Runnable {
 		menuItem.setMnemonic(KeyEvent.VK_D);
 		menuFile.add(menuItem);*/
 		
+		menuHandler.setup();
 		mainFrame.setJMenuBar(menuBar);
 	}
 	
@@ -123,21 +128,23 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public void showFileNotFound(String filePath) {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(mainFrame, "File non trovato.");
 	}
 
 	@Override
 	public void showCannotCreateFile(String filePath) {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(mainFrame, "Impossibile creare il file.");
 	}
 
 	@Override
 	public int waitForUserAction() {
+		userBool = false;
 		toolBar.setActive(true);
+		menuHandler.setActive(true);
 		waitUserInput();
 		toolBar.setActive(false);
+		menuHandler.setActive(false);
+		userBool = true;
 		return userInt;
 	}
 	

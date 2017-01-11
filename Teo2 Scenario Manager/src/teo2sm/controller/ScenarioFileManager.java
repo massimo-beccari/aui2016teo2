@@ -49,8 +49,14 @@ public class ScenarioFileManager {
 		RandomAccessFile file;
 		try {
 			file = new RandomAccessFile(filePath, "r");
-			//title
+			//check
 			String in = file.readLine();
+			if(!in.equals(Constants.FILE_EXTENSION)) {
+				file.close();
+				return null;
+			}
+			//title
+			in = file.readLine();
 			scenario.setTitle(in);
 			//scenes
 			SceneData scene;
@@ -70,8 +76,10 @@ public class ScenarioFileManager {
 				in = file.readLine();
 			}
 			file.close();
+			//TODO controllo directory
 		} catch (FileNotFoundException e) {
 			app.getUI().showFileNotFound(filePath);
+			return null;
 		} catch (IOException e) {
 			System.err.println("Errore lettura stringa in caricamento scenario");
 			e.printStackTrace();
@@ -85,7 +93,9 @@ public class ScenarioFileManager {
 		File file = new File(filePath);
         try {
         	FileWriter fw = new FileWriter(file);
-            BufferedWriter bw = new BufferedWriter(fw);;
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(Constants.FILE_EXTENSION);
+			bw.newLine();
 			bw.write(scenario.getTitle());
 			bw.newLine();
 			for(SceneData scene : scenario.getScenes()) {
@@ -98,12 +108,76 @@ public class ScenarioFileManager {
 			}
 			bw.flush();
 			bw.close();
+			if(!createFolders())
+				throw new IOException("Error in creating scenario folders.");
 	    } catch (IOException e) {
-	    	System.err.println("Errore scrittura stringa in salvataggio scenario");
+	    	String message = e.getMessage();
+	    	if(message != null)
+	    		System.err.println(message);
+	    	else
+	    		System.err.println("Errore scrittura stringa in salvataggio scenario");
 			e.printStackTrace();
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean createFolders() throws IOException {
+		File folder;
+		boolean created, outcome = true;
+		//main folder
+		folder = new File(filePath+"_data");
+		if(!folder.exists())
+			folder.mkdir();
+		int i = 1;
+		for(@SuppressWarnings("unused") SceneData scene : scenario.getScenes()) {
+			//scene folder
+			if(i<10)
+				folder = new File(filePath+"_data/scene0"+i);
+			else
+				folder = new File(filePath+"_data/scene"+i);
+			if(!folder.exists()) {
+				created = folder.mkdir();
+				outcome = outcome && created;
+			}
+			if(!createSceneFolders(i))
+				throw new IOException("Error in creating scene folders.");
+			i++;
+		}
+		return outcome;
+	}
+	
+	private boolean createSceneFolders(int i) {
+		File folder;
+		boolean created, outcome = true;
+		//story folder
+		if(i<10)
+			folder = new File(filePath+"_data/scene0"+i+"/story");
+		else
+			folder = new File(filePath+"_data/scene"+i+"/story");
+		if(!folder.exists()) {
+			created = folder.mkdir();
+			outcome = outcome && created;
+		}
+		//music folder
+		if(i<10)
+			folder = new File(filePath+"_data/scene0"+i+"/music");
+		else
+			folder = new File(filePath+"_data/scene"+i+"/music");
+		if(!folder.exists()) {
+			created = folder.mkdir();
+			outcome = outcome && created;
+		}
+		//video folder
+		if(i<10)
+			folder = new File(filePath+"_data/scene0"+i+"/video");
+		else
+			folder = new File(filePath+"_data/scene"+i+"/video");
+		if(!folder.exists()) {
+			created = folder.mkdir();
+			outcome = outcome && created;
+		}
+		return outcome;
 	}
 
 	public int getMode() {
@@ -114,26 +188,22 @@ public class ScenarioFileManager {
 	public static void main(String[] args) {
 		AppRefs app = new AppRefs(new CLI());
 		//test load
-		ScenarioFileManager sfm = new ScenarioFileManager(app, "C:\\Users\\Max\\test.txt");
-		try {
-			ScenarioData sc = sfm.getScenario();
-			SceneData scene = sc.getScenes().get(0);
-			System.out.println(sc.getTitle());
-			System.out.println(scene.getStoryPath());
-			System.out.println(scene.getBackgroundMusicPath());
-			System.out.println(scene.getProjectedContentPath());
-			System.out.println(scene.getRfidObjectTag());
-			scene = sc.getScenes().get(1);
-			System.out.println(sc.getTitle());
-			System.out.println(scene.getStoryPath());
-			System.out.println(scene.getBackgroundMusicPath());
-			System.out.println(scene.getProjectedContentPath());
-			System.out.println(scene.getRfidObjectTag());
-		} catch (InvalidOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ScenarioFileManager sfm = new ScenarioFileManager(app, "C:/Users/Max/test.txt");
+		ScenarioData sc = sfm.getScenario();
+		SceneData scene = sc.getScenes().get(0);
+		System.out.println(sc.getTitle());
+		System.out.println(scene.getStoryPath());
+		System.out.println(scene.getBackgroundMusicPath());
+		System.out.println(scene.getProjectedContentPath());
+		System.out.println(scene.getRfidObjectTag());
+		scene = sc.getScenes().get(1);
+		System.out.println(sc.getTitle());
+		System.out.println(scene.getStoryPath());
+		System.out.println(scene.getBackgroundMusicPath());
+		System.out.println(scene.getProjectedContentPath());
+		System.out.println(scene.getRfidObjectTag());
 		//test write
+		sfm = new ScenarioFileManager(app, "C:/Users/Max/test2.txt");
 		ScenarioData sc2 = new ScenarioData();
 		sc2.setTitle("prova_titolo");
 		SceneData scene2 = new SceneData();
@@ -149,11 +219,6 @@ public class ScenarioFileManager {
 		scene2.setRfidObjectTag("987654");
 		sc2.getScenes().add(scene2);
 		sfm = new ScenarioFileManager(app, sc2, "C:\\Users\\Max\\test2.txt");
-		try {
-			sfm.saveFile();
-		} catch (InvalidOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		sfm.saveFile();
 	}*/
 }

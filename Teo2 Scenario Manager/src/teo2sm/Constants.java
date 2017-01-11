@@ -10,7 +10,8 @@ public class Constants {
 	public static final int DEFAULT_ICONS_SIZE = 24;
 	//user actions
 	public static final int LOAD_SCENARIO_ACTION = 1;
-	public static final int NEW_SCENARIO_ACTION = 1;
+	public static final int NEW_SCENARIO_ACTION = 2;
 	//application
+	public static final int DEFAULT_USERINT_VALUE = 0;
 	public static final String FILE_EXTENSION = ".teo2s";
 }
