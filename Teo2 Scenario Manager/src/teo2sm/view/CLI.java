@@ -37,7 +37,25 @@ public class CLI implements UserInterface {
 	}
 
 	@Override
+	public void setOpenedScenario(int code) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void setTitle(String title) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String askSaveFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void hideClosedScenario() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -18,9 +18,11 @@ public class MainToolBar extends JPanel implements ActionListener {
     private GUI gui;
     private JButton newFileButton;
     private JButton loadFileButton;
+    private JButton saveFileButton;
     private JButton playButton;
     private JButton pauseButton;
     private JButton stopButton;
+    private JButton closeButton;
 	protected String newline = "\n";
 
     public MainToolBar(GUI gui) {
@@ -32,6 +34,7 @@ public class MainToolBar extends JPanel implements ActionListener {
         JToolBar toolBar = new JToolBar("Tool bar");
         addButtons(toolBar);
         setPlayable(0);
+        setOpened(0);
 
         //Lay out the main panel.
         setPreferredSize(new Dimension(Constants.DEFAULT_WINDOW_WIDTH, Constants.DEFAULT_ICONS_SIZE+16));
@@ -52,6 +55,12 @@ public class MainToolBar extends JPanel implements ActionListener {
                                       "Open scenario...",
                                       "Load");
         toolBar.add(loadFileButton);
+        
+        //save file button
+        saveFileButton = makeButton("res/images/save_file.png",
+                                      "Save scenario...",
+                                      "Save");
+        toolBar.add(saveFileButton);
         toolBar.addSeparator();
         
         //play scenario button
@@ -71,6 +80,13 @@ public class MainToolBar extends JPanel implements ActionListener {
                                       "Stop scenario",
                                       "Stop");
         toolBar.add(stopButton);
+        toolBar.addSeparator();
+        
+        //close scenario button
+        closeButton = makeButton("res/images/close_file.png",
+                                      "Close scenario",
+                                      "Close");
+        toolBar.add(closeButton);
     }
 
     protected JButton makeButton(String imagePath, String toolTipText, String altText) {
@@ -96,6 +112,9 @@ public class MainToolBar extends JPanel implements ActionListener {
 	        } else if (e.getSource().equals(newFileButton)) {
 	        	gui.setUserInt(Constants.ACTION_NEW_SCENARIO);
 	            gui.setUserBool(true);
+	        } else if (e.getSource().equals(saveFileButton)) {
+	        	gui.setUserInt(Constants.ACTION_SAVE_SCENARIO);
+	            gui.setUserBool(true);
 	        } else if (e.getSource().equals(playButton)) {
 	        	gui.setUserInt(Constants.ACTION_PLAY_SCENARIO);
 	            gui.setUserBool(true);
@@ -104,6 +123,9 @@ public class MainToolBar extends JPanel implements ActionListener {
 	            gui.setUserBool(true);
 	        } else if (e.getSource().equals(stopButton)) {
 	        	gui.setUserInt(Constants.ACTION_STOP_SCENARIO);
+	            gui.setUserBool(true);
+	        } else if (e.getSource().equals(closeButton)) {
+	        	gui.setUserInt(Constants.ACTION_CLOSE_SCENARIO);
 	            gui.setUserBool(true);
 	        }
     }
@@ -136,6 +158,31 @@ public class MainToolBar extends JPanel implements ActionListener {
 	        	playButton.setEnabled(false);
 	        	pauseButton.setEnabled(false);
 	        	stopButton.setEnabled(false);
+		}
+	}
+	
+	public void setOpened(int code) {
+		switch(code) {
+			case Constants.SCENARIO_CLOSED:
+	        	loadFileButton.setEnabled(true);
+	        	newFileButton.setEnabled(true);
+	        	saveFileButton.setEnabled(false);
+	        	closeButton.setEnabled(false);
+	        	break;
+	        	
+			case Constants.SCENARIO_OPENED:
+	        	loadFileButton.setEnabled(false);
+	        	newFileButton.setEnabled(false);
+	        	saveFileButton.setEnabled(true);
+	        	closeButton.setEnabled(true);
+	        	break;
+	        
+	        default:
+	        	loadFileButton.setEnabled(false);
+	        	newFileButton.setEnabled(false);
+	        	saveFileButton.setEnabled(false);
+	        	closeButton.setEnabled(false);
+	        	break;
 		}
 	}
 }

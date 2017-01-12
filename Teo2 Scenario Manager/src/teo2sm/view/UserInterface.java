@@ -10,9 +10,15 @@ public interface UserInterface {
 	
 	public String askFile();
 	
+	public String askSaveFile();
+	
 	public void showScene(int number);
 	
 	public void setPlayableScenario(int code);
 	
+	public void setOpenedScenario(int code);
+	
 	public void setTitle(String title);
+	
+	public void hideClosedScenario();
 }

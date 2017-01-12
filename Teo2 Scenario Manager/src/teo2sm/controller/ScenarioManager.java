@@ -3,6 +3,7 @@ package teo2sm.controller;
 import teo2sm.AppRefs;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
+import teo2sm.model.ScenarioFileManager;
 import teo2sm.model.SceneData;
 
 public class ScenarioManager {
@@ -32,6 +33,7 @@ public class ScenarioManager {
 		}
 		app.getUI().setTitle(scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
+		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
 	}
 	
 	//manage user actions
@@ -48,9 +50,15 @@ public class ScenarioManager {
 			case Constants.ACTION_STOP_SCENARIO:
 				manageStop();
 				break;
+			
+			case Constants.ACTION_SAVE_SCENARIO:
+				manageSave();
+				break;
 				
 			case Constants.ACTION_CLOSE_SCENARIO:
 				opened = false;
+				app.getUI().setOpenedScenario(Constants.SCENARIO_CLOSED);
+				app.getUI().hideClosedScenario();
 				break;
 			
 			default:
@@ -74,5 +82,17 @@ public class ScenarioManager {
 	private void manageStop() {
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 			
+	}
+	
+	//manage scenario save
+	private void manageSave() {
+		String filePath = app.getUI().askSaveFile();
+		//check file
+		if(filePath != null) {
+			ScenarioFileManager sfm = new ScenarioFileManager(scenario, filePath);
+			boolean outcome = sfm.saveFile();
+			if(!outcome)
+				app.getUI().showCannotCreateFile(filePath);
+		}
 	}
 }

@@ -18,6 +18,7 @@ public class AppCore {
 	
 	private void mainRoutine() {
 		int action;
+		app.getUI().setOpenedScenario(Constants.SCENARIO_CLOSED);
 		while(true) {
 			action = app.getUI().waitForUserAction();
 			switch(action) {

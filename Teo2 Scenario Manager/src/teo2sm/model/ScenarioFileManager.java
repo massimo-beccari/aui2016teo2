@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Scanner;
 
-import teo2sm.AppRefs;
 import teo2sm.Constants;
 
 public class ScenarioFileManager {
@@ -31,7 +30,7 @@ public class ScenarioFileManager {
 	 * @param scenario the scenario to save
 	 * @param filePath the string containing the file path to save
 	 */
-	public ScenarioFileManager(AppRefs app, ScenarioData scenario, String filePath) {
+	public ScenarioFileManager(ScenarioData scenario, String filePath) {
 		this.scenario = scenario;
 		this.filePath = filePath;
 		mode = Constants.WRITE;
@@ -158,6 +157,7 @@ public class ScenarioFileManager {
 			}
 			if(!createSceneFolders(i))
 				throw new IOException("Error in creating scene folders.");
+			//TODO copy multimedia file into foders
 			i++;
 		}
 		return outcome;

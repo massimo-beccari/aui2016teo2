@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import teo2sm.Constants;
 
@@ -111,6 +113,27 @@ public class GUI implements UserInterface, Runnable {
 		menuFile.add(menuItem);
 		menuHandler.getMenuItems().add(menuItem);
 		
+		//file/save
+		menuItem = new JMenuItem("Save Scenario...",
+                KeyEvent.VK_S);
+		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
+		menuItem.getAccessibleContext().setAccessibleDescription(
+				"Save scenario...");
+		menuFile.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
+		menuFile.addSeparator();
+		
+		//file/close
+		menuItem = new JMenuItem("Close scenario",
+                KeyEvent.VK_C);
+		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
+		menuItem.getAccessibleContext().setAccessibleDescription(
+				"Close scenario");
+		menuFile.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
+		
 		/*menuItem = new JMenuItem("Both text and icon",
 		                new ImageIcon("images/middle.gif"));
 		menuItem.setMnemonic(KeyEvent.VK_B);
@@ -121,10 +144,10 @@ public class GUI implements UserInterface, Runnable {
 		menuFile.add(menuItem);*/
 		
 		//scenario menu
-		menuScenario = new JMenu("Scenario");
-		menuScenario.setMnemonic(KeyEvent.VK_S);
+		menuScenario = new JMenu("Play");
+		menuScenario.setMnemonic(KeyEvent.VK_P);
 		menuScenario.getAccessibleContext().setAccessibleDescription(
-		        "Scenario");
+		        "Play");
 		menuBar.add(menuScenario);
 		
 		//scenario/play
@@ -188,7 +211,7 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public void showFileNotFound(String filePath) {
-		JOptionPane.showMessageDialog(mainFrame, "File non trovato.");
+		JOptionPane.showMessageDialog(mainFrame, "File "+filePath+" non trovato.");
 	}
 
 	@Override
@@ -211,12 +234,32 @@ public class GUI implements UserInterface, Runnable {
 	@Override
 	public String askFile() {
 		final JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle("Open...");
+		fc.setFileFilter(new FileNameExtensionFilter("Teo2 Scenario file", "teo2s"));
+		fc.setApproveButtonText("Open");
 		int returnVal = fc.showOpenDialog(mainFrame);
 		File file = null;
 		
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
             return file.getAbsolutePath();
+        }
+        
+		return null;
+	}
+
+	@Override
+	public String askSaveFile() {
+		final JFileChooser fc = new JFileChooser();
+		fc.setDialogTitle("Save file...");
+		fc.setFileFilter(new FileNameExtensionFilter("Teo2 Scenario file", "teo2s"));
+		fc.setApproveButtonText("Save");
+		int returnVal = fc.showOpenDialog(mainFrame);
+		File file = null;
+		
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            file = fc.getSelectedFile();
+            return new String(file.getAbsolutePath()+Constants.FILE_EXTENSION);
         }
         
 		return null;
@@ -241,8 +284,21 @@ public class GUI implements UserInterface, Runnable {
 	}
 
 	@Override
+	public void setOpenedScenario(int code) {
+		toolBar.setOpened(code);
+		menuHandler.setOpened(code);
+	}
+
+	@Override
 	public void setTitle(String title) {
 		mainFrame.setTitle(Constants.WINDOW_TITLE+" - "+title);
+	}
+
+	@Override
+	public void hideClosedScenario() {
+		contentPane.remove(scenarioPanel);
+		setupScenarioPanel();
+		contentPane.repaint();
 	}
 
 	public void setUserBool(boolean userBool) {
