@@ -1,4 +1,4 @@
-package teo2sm.controller;
+package teo2sm.model;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,12 +10,8 @@ import java.util.Scanner;
 
 import teo2sm.AppRefs;
 import teo2sm.Constants;
-import teo2sm.model.ScenarioData;
-import teo2sm.model.SceneData;
-//import teo2sm.view.CLI;
 
 public class ScenarioFileManager {
-	private AppRefs app;
 	private String filePath;
 	private ScenarioData scenario;
 	private final int mode;
@@ -24,8 +20,7 @@ public class ScenarioFileManager {
 	 * Constructor for loading mode
 	 * @param filePath the string containing the file path to load
 	 */
-	public ScenarioFileManager(AppRefs app, String filePath) {
-		this.app = app;
+	public ScenarioFileManager(String filePath) {
 		this.filePath = filePath;
 		scenario = new ScenarioData();
 		mode = Constants.LOAD;
@@ -37,7 +32,6 @@ public class ScenarioFileManager {
 	 * @param filePath the string containing the file path to save
 	 */
 	public ScenarioFileManager(AppRefs app, ScenarioData scenario, String filePath) {
-		this.app = app;
 		this.scenario = scenario;
 		this.filePath = filePath;
 		mode = Constants.WRITE;
@@ -65,9 +59,6 @@ public class ScenarioFileManager {
 			while(in != null) {
 				scene = new SceneData();
 				s = new Scanner(in);
-				scene.setStoryPath(s.next());
-				scene.setBackgroundMusicPath(s.next());
-				scene.setProjectedContentPath(s.next());
 				scene.setRfidObjectTag(s.next());
 				in = file.readLine();
 				//TODO lettura azioni teo
@@ -76,9 +67,25 @@ public class ScenarioFileManager {
 				in = file.readLine();
 			}
 			file.close();
-			//TODO controllo directory
+			//check directories and setup paths in scene data
+			File fl = new File(filePath+"_data");
+			if(!fl.exists())
+				throw new FileNotFoundException();
+			int i = 1;
+			for(SceneData sc : scenario.getScenes()) {
+				if(i<10)
+					fl = new File(filePath+"_data/scene0"+i);
+				else
+					fl = new File(filePath+"_data/scene"+i);
+				if(!fl.exists())
+					throw new FileNotFoundException();
+				if(!checkDirectories(i)) {
+					throw new FileNotFoundException();
+				}
+				setupSceneFolders(sc, i);
+				i++;
+			}
 		} catch (FileNotFoundException e) {
-			app.getUI().showFileNotFound(filePath);
 			return null;
 		} catch (IOException e) {
 			System.err.println("Errore lettura stringa in caricamento scenario");
@@ -99,9 +106,6 @@ public class ScenarioFileManager {
 			bw.write(scenario.getTitle());
 			bw.newLine();
 			for(SceneData scene : scenario.getScenes()) {
-				bw.write(scene.getStoryPath()+" ");
-				bw.write(scene.getBackgroundMusicPath()+" ");
-				bw.write(scene.getProjectedContentPath()+" ");
 				bw.write(scene.getRfidObjectTag());
 				bw.newLine();
 				//TODO scrittura azioni teo
@@ -179,7 +183,40 @@ public class ScenarioFileManager {
 		}
 		return outcome;
 	}
+	
+	private boolean checkDirectories(int i) {
+		boolean outcome = true;
+		File folder;
+		if(i<10) {
+			folder = new File(filePath+"_data/scene0"+i+"/story");
+			outcome = outcome && folder.exists();
+			folder = new File(filePath+"_data/scene0"+i+"/music");
+			outcome = outcome && folder.exists();
+			folder = new File(filePath+"_data/scene0"+i+"/video");
+			outcome = outcome && folder.exists();
+		} else {
+			folder = new File(filePath+"_data/scene"+i+"/story");
+			outcome = outcome && folder.exists();
+			folder = new File(filePath+"_data/scene"+i+"/music");
+			outcome = outcome && folder.exists();
+			folder = new File(filePath+"_data/scene"+i+"/video");
+			outcome = outcome && folder.exists();
+		}
+		return outcome;
+	}
 
+	private void setupSceneFolders(SceneData scene, int i) {
+		if(i<10) {
+			scene.setStoryPath(filePath+"_data/scene0"+i+"/story");
+			scene.setBackgroundMusicPath(filePath+"_data/scene0"+i+"/music");
+			scene.setProjectedContentPath(filePath+"_data/scene0"+i+"/video");
+		} else {
+			scene.setStoryPath(filePath+"_data/scene"+i+"/story");
+			scene.setBackgroundMusicPath(filePath+"_data/scene"+i+"/music");
+			scene.setProjectedContentPath(filePath+"_data/scene"+i+"/video");
+		}
+	}
+	
 	public int getMode() {
 		return mode;
 	}
@@ -188,7 +225,7 @@ public class ScenarioFileManager {
 	public static void main(String[] args) {
 		AppRefs app = new AppRefs(new CLI());
 		//test load
-		ScenarioFileManager sfm = new ScenarioFileManager(app, "C:/Users/Max/test.txt");
+		ScenarioFileManager sfm = new ScenarioFileManager("C:/Users/Max/test.txt");
 		ScenarioData sc = sfm.getScenario();
 		SceneData scene = sc.getScenes().get(0);
 		System.out.println(sc.getTitle());
@@ -203,7 +240,7 @@ public class ScenarioFileManager {
 		System.out.println(scene.getProjectedContentPath());
 		System.out.println(scene.getRfidObjectTag());
 		//test write
-		sfm = new ScenarioFileManager(app, "C:/Users/Max/test2.txt");
+		sfm = new ScenarioFileManager("C:/Users/Max/test2.txt");
 		ScenarioData sc2 = new ScenarioData();
 		sc2.setTitle("prova_titolo");
 		SceneData scene2 = new SceneData();

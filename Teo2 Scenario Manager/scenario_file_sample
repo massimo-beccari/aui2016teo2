@@ -1,5 +1,5 @@
 .teo2s
 [title]
-[speech_file_path] [background_music_file_path] [projector_content_file_path] [rfid_tag]
+[rfid_tag]
 [time]_[action] [time]_[action] ...
 ...

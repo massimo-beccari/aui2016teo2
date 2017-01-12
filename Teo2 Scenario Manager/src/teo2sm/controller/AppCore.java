@@ -3,6 +3,7 @@ package teo2sm.controller;
 import teo2sm.AppRefs;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
+import teo2sm.model.ScenarioFileManager;
 
 public class AppCore {
 	private AppRefs app;
@@ -34,7 +35,7 @@ public class AppCore {
 		String filePath = app.getUI().askFile();
 		//check file
 		if(filePath != null) {
-			ScenarioFileManager sfm = new ScenarioFileManager(app, filePath);
+			ScenarioFileManager sfm = new ScenarioFileManager(filePath);
 			ScenarioData loadedScenario = sfm.getScenario();
 			//check loading
 			if(loadedScenario != null) {
