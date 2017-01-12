@@ -1,6 +1,7 @@
 package teo2sm.model;
 
 public class SceneData {
+	private int seqNumber;
 	private String backgroundMusicPath;
 	private String storyPath;
 	private String projectedContentPath;
@@ -38,5 +39,13 @@ public class SceneData {
 
 	public void setRfidObjectTag(String rfidObjectTag) {
 		this.rfidObjectTag = rfidObjectTag;
+	}
+
+	public int getSeqNumber() {
+		return seqNumber;
+	}
+
+	public void setSeqNumber(int seqNumber) {
+		this.seqNumber = seqNumber;
 	}
 }

@@ -9,4 +9,10 @@ public interface UserInterface {
 	public int waitForUserAction();
 	
 	public String askFile();
+	
+	public void showScene(int number);
+	
+	public void setPlayableScenario(int code);
+	
+	public void setTitle(String title);
 }

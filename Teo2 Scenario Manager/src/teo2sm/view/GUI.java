@@ -1,20 +1,26 @@
 package teo2sm.view;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
@@ -27,20 +33,28 @@ public class GUI implements UserInterface, Runnable {
 	
 	private JFrame mainFrame;
 	private Container contentPane;
+	private JPanel scenarioPanel;
+	private BoxLayout scenarioLayout;
 	private SpringLayout layout;
 	private JMenuBar menuBar;
 	private MenuHandler menuHandler;
 	private MainToolBar toolBar;
 	private JMenu menuFile;
+	private JMenu menuScenario;
+	private ArrayList<JLabel> sceneLabels;
 	
 	public GUI() {
 		userBool = true;
 		userInt = Constants.DEFAULT_USERINT_VALUE;
-		mainFrame = new JFrame("Teo2 Scenario Manager");
+		mainFrame = new JFrame(Constants.WINDOW_TITLE);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layout = new SpringLayout();
 		contentPane = mainFrame.getContentPane();
 		contentPane.setLayout(layout);
+		
+		//scenario panel
+		sceneLabels = new ArrayList<JLabel>();
+		setupScenarioPanel();
 		
 		//menu bar
 		setupMenuBar();
@@ -52,10 +66,19 @@ public class GUI implements UserInterface, Runnable {
 		
 		//END TEST
 		
-		mainFrame.pack();
+		//mainFrame.pack();
 		mainFrame.setSize(Constants.DEFAULT_WINDOW_WIDTH, Constants.DEFAULT_WINDOW_HEIGHT);
 		mainFrame.setResizable(false);
 		mainFrame.setVisible(true);
+	}
+	
+	private void setupScenarioPanel() {
+		scenarioPanel = new JPanel();
+		scenarioLayout = new BoxLayout(scenarioPanel, BoxLayout.X_AXIS);
+		scenarioPanel.setLayout(scenarioLayout);
+		layout.putConstraint(SpringLayout.WEST, scenarioPanel, 0, SpringLayout.WEST, contentPane);
+		layout.putConstraint(SpringLayout.NORTH, scenarioPanel, 48, SpringLayout.NORTH, contentPane);
+		contentPane.add(scenarioPanel);
 	}
 	
 	private void setupMenuBar() {
@@ -96,6 +119,43 @@ public class GUI implements UserInterface, Runnable {
 		menuItem = new JMenuItem(new ImageIcon("images/middle.gif"));
 		menuItem.setMnemonic(KeyEvent.VK_D);
 		menuFile.add(menuItem);*/
+		
+		//scenario menu
+		menuScenario = new JMenu("Scenario");
+		menuScenario.setMnemonic(KeyEvent.VK_S);
+		menuScenario.getAccessibleContext().setAccessibleDescription(
+		        "Scenario");
+		menuBar.add(menuScenario);
+		
+		//scenario/play
+		menuItem = new JMenuItem("Play scenario",
+                KeyEvent.VK_P);
+		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
+		menuItem.getAccessibleContext().setAccessibleDescription(
+				"Play scenario");
+		menuScenario.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
+		
+		//scenario/pause
+		menuItem = new JMenuItem("Pause scenario",
+                KeyEvent.VK_U);
+		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
+		menuItem.getAccessibleContext().setAccessibleDescription(
+				"Pause scenario");
+		menuScenario.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
+		
+		//scenario/stop
+		menuItem = new JMenuItem("Stop scenario",
+                KeyEvent.VK_S);
+		/*menuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_1, ActionEvent.ALT_MASK));*/
+		menuItem.getAccessibleContext().setAccessibleDescription(
+				"Stop scenario");
+		menuScenario.add(menuItem);
+		menuHandler.getMenuItems().add(menuItem);
 		
 		menuHandler.setup();
 		mainFrame.setJMenuBar(menuBar);
@@ -161,7 +221,30 @@ public class GUI implements UserInterface, Runnable {
         
 		return null;
 	}
+
+	@Override
+	public void showScene(int number) {
+		JLabel sceneLabel = new JLabel("scene "+number, new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
+		sceneLabels.add(sceneLabel);
+		sceneLabel.setVerticalTextPosition(JLabel.BOTTOM);
+		sceneLabel.setHorizontalTextPosition(JLabel.CENTER);
+		scenarioPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		scenarioPanel.add(sceneLabel);
+		scenarioPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		scenarioPanel.updateUI();
+	}
 	
+	@Override
+	public void setPlayableScenario(int code) {
+		toolBar.setPlayable(code);
+		menuHandler.setPlayable(code);
+	}
+
+	@Override
+	public void setTitle(String title) {
+		mainFrame.setTitle(Constants.WINDOW_TITLE+" - "+title);
+	}
+
 	public void setUserBool(boolean userBool) {
 		this.userBool = userBool;
 	}

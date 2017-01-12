@@ -38,6 +38,12 @@ public class ScenarioFileManager {
 	}
 	
 	//WARNING: call this method only in LOAD mode
+	/**
+	 * Load a scenario from a file
+	 * @return the loaded scenario, or null if an exception was caught
+	 * (Catch FileNotFoundException if file doesn't exists, file exists but some of the scenario folders don't exist
+	 * Catch IOException if there's an error reading a line of file)
+	 */
 	public ScenarioData getScenario() {
 		//loading code
 		RandomAccessFile file;
@@ -73,6 +79,7 @@ public class ScenarioFileManager {
 				throw new FileNotFoundException();
 			int i = 1;
 			for(SceneData sc : scenario.getScenes()) {
+				sc.setSeqNumber(i);
 				if(i<10)
 					fl = new File(filePath+"_data/scene0"+i);
 				else
@@ -90,11 +97,16 @@ public class ScenarioFileManager {
 		} catch (IOException e) {
 			System.err.println("Errore lettura stringa in caricamento scenario");
 			e.printStackTrace();
+			return null;
 		}
 		return scenario;
 	}
 	
 	//WARNING: call this method only in WRITE mode
+	/**
+	 * Write the class attribute scenario to a file (class attribute filePath)
+	 * @return true if no exception are caught, false otherwise
+	 */
 	public boolean saveFile() {
 		//saving code
 		File file = new File(filePath);

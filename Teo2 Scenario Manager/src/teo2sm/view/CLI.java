@@ -23,4 +23,22 @@ public class CLI implements UserInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void showScene(int number) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPlayableScenario(int code) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTitle(String title) {
+		// TODO Auto-generated method stub
+		
+	}
 }

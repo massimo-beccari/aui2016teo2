@@ -21,10 +21,10 @@ public class AppCore {
 		while(true) {
 			action = app.getUI().waitForUserAction();
 			switch(action) {
-				case Constants.LOAD_SCENARIO_ACTION:
+				case Constants.ACTION_LOAD_SCENARIO:
 					loadScenario();
 					break;
-				case Constants.NEW_SCENARIO_ACTION:
+				case Constants.ACTION_NEW_SCENARIO:
 					newScenario();
 					break;
 			}
