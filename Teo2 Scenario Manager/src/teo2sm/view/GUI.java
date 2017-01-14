@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,6 +29,10 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import teo2sm.Constants;
+import teo2sm.model.ScenarioData;
+import teo2sm.view.wizard.NewScenarioWizardCallback;
+import teo2sm.view.wizard.NewScenarioWizardData;
+import teo2sm.view.wizard.Wizard;
 
 public class GUI implements UserInterface, Runnable {
 	private boolean userBool;
@@ -299,6 +304,15 @@ public class GUI implements UserInterface, Runnable {
 		contentPane.remove(scenarioPanel);
 		setupScenarioPanel();
 		contentPane.repaint();
+	}
+
+	@Override
+	public ScenarioData createScenarioWizard() {
+		NewScenarioWizardData model = new NewScenarioWizardData();
+		NewScenarioWizardCallback callback = new NewScenarioWizardCallback();
+		Wizard<ScenarioData> wizard = new Wizard<ScenarioData>(model, callback);
+		wizard.startWizard();
+		return callback.getScenario();
 	}
 
 	public void setUserBool(boolean userBool) {

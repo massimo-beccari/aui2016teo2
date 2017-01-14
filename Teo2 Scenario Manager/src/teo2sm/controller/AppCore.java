@@ -49,6 +49,6 @@ public class AppCore {
 	}
 	
 	private void newScenario() {
-		
+		app.getUI().createScenarioWizard();
 	}
 }

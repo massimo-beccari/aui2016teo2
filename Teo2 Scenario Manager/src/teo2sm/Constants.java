@@ -23,6 +23,9 @@ public class Constants {
 	//scenario file status
 	public static final int SCENARIO_OPENED = 1;
 	public static final int SCENARIO_CLOSED = 2;
+	//wizard page ids
+	public static final String WIZARD_PAGE_FIRST = "wizard_0";
+	public static final String WIZARD_PAGE_SCENE = "wizard_";
 	//application
 	public static final int DEFAULT_USERINT_VALUE = 0;
 	public static final String FILE_EXTENSION = ".teo2s";

@@ -1,5 +1,7 @@
 package teo2sm.view;
 
+import teo2sm.model.ScenarioData;
+
 public interface UserInterface {
 	
 	public void showFileNotFound(String filePath);
@@ -21,4 +23,6 @@ public interface UserInterface {
 	public void setTitle(String title);
 	
 	public void hideClosedScenario();
+	
+	public ScenarioData createScenarioWizard();
 }

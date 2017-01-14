@@ -1,5 +1,7 @@
 package teo2sm.view;
 
+import teo2sm.model.ScenarioData;
+
 public class CLI implements UserInterface {
 	
 	@Override
@@ -58,5 +60,11 @@ public class CLI implements UserInterface {
 	public void hideClosedScenario() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ScenarioData createScenarioWizard() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
