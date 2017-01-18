@@ -24,6 +24,24 @@ public class NewScenarioWizardPage1 extends WizardPage {
 	
 	@Override
 	public void onPageAboutToDisplay() {
+		error = false;
+		removeAll();
+	}
+
+	@Override
+	public void onPageHidden() {
+		try {
+			title = titleText.getText();
+			sceneNumber = Integer.parseInt(sceneNumberText.getText());
+		} catch(NullPointerException e) {
+			error = true;
+		} catch(NumberFormatException e) {
+			error = true;
+		}
+	}
+
+	@Override
+	public void onPageShown() {
 		layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		this.setLayout(layout);
 		titleLabel = new JLabel("Scenario title:");
@@ -42,23 +60,6 @@ public class NewScenarioWizardPage1 extends WizardPage {
 	}
 
 	@Override
-	public void onPageHidden() {
-		try {
-			title = titleText.getText();
-			sceneNumber = Integer.parseInt(sceneNumberText.getText());
-		} catch(NullPointerException e) {
-			error = true;
-		} catch(NumberFormatException e) {
-			error = true;
-		}
-	}
-
-	@Override
-	public void onPageShown() {
-		
-	}
-
-	@Override
 	public boolean getError() {
 		return error;
 	}
@@ -67,7 +68,15 @@ public class NewScenarioWizardPage1 extends WizardPage {
 		return title;
 	}
 
+	protected void setTitleText(String titleText) {
+		this.titleText.setText(titleText);
+	}
+
 	public int getSceneNumber() {
 		return sceneNumber;
+	}
+	
+	protected void setSceneNumberText(String sceneNumberText) {
+		this.sceneNumberText.setText(sceneNumberText);
 	}
 }

@@ -49,6 +49,8 @@ public class AppCore {
 	}
 	
 	private void newScenario() {
-		app.getUI().createScenarioWizard();
+		ScenarioData scenario = app.getUI().createScenarioWizard();
+		ScenarioManager manager = new ScenarioManager(app, scenario);
+		manager.manageScenario();
 	}
 }

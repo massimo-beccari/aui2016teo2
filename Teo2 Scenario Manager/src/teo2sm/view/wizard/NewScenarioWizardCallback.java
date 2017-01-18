@@ -8,8 +8,8 @@ public class NewScenarioWizardCallback implements Consumer<ScenarioData> {
 	ScenarioData scenario;
 
 	@Override
-	public void accept(ScenarioData t) {
-		scenario = t;
+	public void accept(ScenarioData s) {
+		scenario = s;
 	}
 	
 	public ScenarioData getScenario() {

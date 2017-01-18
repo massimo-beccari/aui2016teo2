@@ -31,7 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
 import teo2sm.view.wizard.NewScenarioWizardCallback;
-import teo2sm.view.wizard.NewScenarioWizardData;
+import teo2sm.view.wizard.NewScenarioWizardModel;
 import teo2sm.view.wizard.Wizard;
 
 public class GUI implements UserInterface, Runnable {
@@ -259,7 +259,7 @@ public class GUI implements UserInterface, Runnable {
 		fc.setDialogTitle("Save file...");
 		fc.setFileFilter(new FileNameExtensionFilter("Teo2 Scenario file", "teo2s"));
 		fc.setApproveButtonText("Save");
-		int returnVal = fc.showOpenDialog(mainFrame);
+		int returnVal = fc.showSaveDialog(mainFrame);
 		File file = null;
 		
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -308,7 +308,7 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public ScenarioData createScenarioWizard() {
-		NewScenarioWizardData model = new NewScenarioWizardData();
+		NewScenarioWizardModel model = new NewScenarioWizardModel();
 		NewScenarioWizardCallback callback = new NewScenarioWizardCallback();
 		Wizard<ScenarioData> wizard = new Wizard<ScenarioData>(model, callback);
 		wizard.startWizard();
