@@ -1,6 +1,7 @@
 package teo2sm.view;
 
 import teo2sm.model.ScenarioData;
+import teo2sm.model.SceneData;
 
 public interface UserInterface {
 	
@@ -14,7 +15,7 @@ public interface UserInterface {
 	
 	public String askSaveFile();
 	
-	public void showScene(int number);
+	public void showScenes(ScenarioData scenario);
 	
 	public void setPlayableScenario(int code);
 	

@@ -7,6 +7,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import teo2sm.Constants;
+
 public class NewScenarioWizardPage1 extends WizardPage {
 	private static final long serialVersionUID = 1L;
 	private BoxLayout layout;
@@ -32,11 +34,19 @@ public class NewScenarioWizardPage1 extends WizardPage {
 	public void onPageHidden() {
 		try {
 			title = titleText.getText();
-			sceneNumber = Integer.parseInt(sceneNumberText.getText());
+			if(title.equals(""))
+				title = "new_scenario";
 		} catch(NullPointerException e) {
-			error = true;
+			System.err.println(e.getStackTrace());
+		} 
+		try {
+			sceneNumber = Integer.parseInt(sceneNumberText.getText());
+			if(sceneNumber > Constants.MAX_SCENE_NUMBER)
+				sceneNumber = Constants.MAX_SCENE_NUMBER;
+			if(sceneNumber <= 0)
+				sceneNumber = 1;
 		} catch(NumberFormatException e) {
-			error = true;
+			sceneNumber = 1;
 		}
 	}
 

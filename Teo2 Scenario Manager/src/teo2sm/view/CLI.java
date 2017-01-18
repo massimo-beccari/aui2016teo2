@@ -27,7 +27,7 @@ public class CLI implements UserInterface {
 	}
 
 	@Override
-	public void showScene(int number) {
+	public void showScenes(ScenarioData scenario) {
 		// TODO Auto-generated method stub
 		
 	}

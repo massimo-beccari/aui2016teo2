@@ -121,6 +121,7 @@ public class ScenarioFileManager {
 				bw.write(scene.getRfidObjectTag());
 				bw.newLine();
 				//TODO scrittura azioni teo
+				bw.newLine();
 			}
 			bw.flush();
 			bw.close();

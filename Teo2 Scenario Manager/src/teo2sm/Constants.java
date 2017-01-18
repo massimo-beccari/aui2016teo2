@@ -5,9 +5,10 @@ public class Constants {
 	public static final int LOAD = 1;
 	public static final int WRITE = 2;
 	//dimensions
-	public static final int DEFAULT_WINDOW_HEIGHT = 700;
+	public static final int DEFAULT_WINDOW_HEIGHT = 600;
 	public static final int DEFAULT_WINDOW_WIDTH = 900;
 	public static final int DEFAULT_ICONS_SIZE = 24;
+	public static final int DEFAULT_SCENE_IMAGE_SIZE = 96;
 	//user actions
 	public static final int ACTION_LOAD_SCENARIO = 1;
 	public static final int ACTION_NEW_SCENARIO = 2;
@@ -34,6 +35,7 @@ public class Constants {
 	public static final String WIZARD_PAGE_SCENE = "wizard_2";
 	//application
 	public static final int DEFAULT_USERINT_VALUE = 0;
+	public static final int MAX_SCENE_NUMBER = 16;
 	public static final String FILE_EXTENSION_SCENARIO = ".teo2s";
 	public static final String FILE_EXTENSION_STORY = "mp3";
 	public static final String FILE_EXTENSION_BACKGROUND_MUSIC = "mp3";

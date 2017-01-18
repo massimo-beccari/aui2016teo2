@@ -22,14 +22,19 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import teo2sm.Constants;
+import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
+import teo2sm.model.ScenarioFileManager;
+import teo2sm.model.SceneData;
 import teo2sm.view.wizard.NewScenarioWizardCallback;
 import teo2sm.view.wizard.NewScenarioWizardModel;
 import teo2sm.view.wizard.Wizard;
@@ -39,8 +44,9 @@ public class GUI implements UserInterface, Runnable {
 	private int userInt;
 	
 	private JFrame mainFrame;
-	private Container contentPane;
-	private JPanel scenarioPanel;
+	private JScrollPane mainContainer;
+	private JPanel mainPanel;
+	private ArrayList<JPanel> scenarioPanels;
 	private BoxLayout scenarioLayout;
 	private SpringLayout layout;
 	private JMenuBar menuBar;
@@ -49,6 +55,7 @@ public class GUI implements UserInterface, Runnable {
 	private JMenu menuFile;
 	private JMenu menuScenario;
 	private ArrayList<JLabel> sceneLabels;
+	private int displayedSceneNumber;
 	
 	public GUI() {
 		userBool = true;
@@ -56,12 +63,17 @@ public class GUI implements UserInterface, Runnable {
 		mainFrame = new JFrame(Constants.WINDOW_TITLE);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layout = new SpringLayout();
-		contentPane = mainFrame.getContentPane();
-		contentPane.setLayout(layout);
+		mainPanel = new JPanel();		
+		mainContainer = new JScrollPane(mainPanel);
+		mainFrame.add(mainContainer);
+		mainContainer.setPreferredSize(new Dimension(Constants.DEFAULT_WINDOW_WIDTH, Constants.DEFAULT_WINDOW_HEIGHT));
+		mainContainer.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		mainPanel.setLayout(layout);
 		
 		//scenario panel
 		sceneLabels = new ArrayList<JLabel>();
-		setupScenarioPanel();
+		scenarioPanels = new ArrayList<JPanel>();
+		displayedSceneNumber = 0;
 		
 		//menu bar
 		setupMenuBar();
@@ -79,13 +91,19 @@ public class GUI implements UserInterface, Runnable {
 		mainFrame.setVisible(true);
 	}
 	
-	private void setupScenarioPanel() {
-		scenarioPanel = new JPanel();
-		scenarioLayout = new BoxLayout(scenarioPanel, BoxLayout.X_AXIS);
-		scenarioPanel.setLayout(scenarioLayout);
-		layout.putConstraint(SpringLayout.WEST, scenarioPanel, 0, SpringLayout.WEST, contentPane);
-		layout.putConstraint(SpringLayout.NORTH, scenarioPanel, 48, SpringLayout.NORTH, contentPane);
-		contentPane.add(scenarioPanel);
+	private void setupScenarioPanel(int n) {
+		JPanel newPanel = new JPanel();
+		scenarioLayout = new BoxLayout(newPanel, BoxLayout.X_AXIS);
+		newPanel.setLayout(scenarioLayout);
+		if(n == 0) {
+			layout.putConstraint(SpringLayout.WEST, newPanel, 0, SpringLayout.WEST, mainPanel);
+			layout.putConstraint(SpringLayout.NORTH, newPanel, 48, SpringLayout.NORTH, mainPanel);
+		} else {
+			layout.putConstraint(SpringLayout.WEST, newPanel, 0, SpringLayout.WEST, mainPanel);
+			layout.putConstraint(SpringLayout.NORTH, newPanel, 16, SpringLayout.SOUTH, scenarioPanels.get(n - 1));
+		}
+		mainPanel.add(newPanel);
+		scenarioPanels.add(newPanel);
 	}
 	
 	private void setupMenuBar() {
@@ -191,8 +209,8 @@ public class GUI implements UserInterface, Runnable {
 	
 	private void setupToolBar() {
 		toolBar = new MainToolBar(this);
-		contentPane.add(toolBar);
-		layout.putConstraint(SpringLayout.NORTH, toolBar, 0, SpringLayout.NORTH, contentPane);
+		mainPanel.add(toolBar);
+		layout.putConstraint(SpringLayout.NORTH, toolBar, 0, SpringLayout.NORTH, mainPanel);
 	}
 	
 	private void waitUserInput() {
@@ -275,15 +293,28 @@ public class GUI implements UserInterface, Runnable {
 	}
 
 	@Override
-	public void showScene(int number) {
-		JLabel sceneLabel = new JLabel("scene "+number, new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
+	public void showScenes(ScenarioData scenario) {
+		for(SceneData scene : scenario.getScenes()) {
+			showScene(scene);
+		}
+		mainPanel.revalidate();
+		mainPanel.repaint();
+	}
+	
+	private void showScene(SceneData scene) {
+		JLabel sceneLabel = new JLabel("scene "+scene.getSeqNumber(), new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
 		sceneLabels.add(sceneLabel);
 		sceneLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		sceneLabel.setHorizontalTextPosition(JLabel.CENTER);
-		scenarioPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-		scenarioPanel.add(sceneLabel);
-		scenarioPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-		scenarioPanel.updateUI();
+		sceneLabel.setToolTipText("RFID tag: "+scene.getRfidObjectTag());
+		displayedSceneNumber = displayedSceneNumber + 1;
+		final int MAX_SCENE_FOR_ROW = 8;
+		if((displayedSceneNumber - 1) % MAX_SCENE_FOR_ROW == 0)
+			setupScenarioPanel((displayedSceneNumber - 1) / MAX_SCENE_FOR_ROW);
+		scenarioPanels.get(scenarioPanels.size() - 1).add(Box.createRigidArea(new Dimension(10, 0)));
+		scenarioPanels.get(scenarioPanels.size() - 1).add(sceneLabel);
+		scenarioPanels.get(scenarioPanels.size() - 1).add(Box.createRigidArea(new Dimension(5, 0)));
+		scenarioPanels.get(scenarioPanels.size() - 1).revalidate();
 	}
 	
 	@Override
@@ -305,9 +336,11 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public void hideClosedScenario() {
-		contentPane.remove(scenarioPanel);
-		setupScenarioPanel();
-		contentPane.repaint();
+		for(JPanel panel : scenarioPanels)
+			mainPanel.remove(panel);
+		displayedSceneNumber = 0;
+		setupScenarioPanel(0);
+		mainPanel.repaint();
 	}
 
 	@Override

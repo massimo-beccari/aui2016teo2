@@ -4,7 +4,6 @@ import teo2sm.AppRefs;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.ScenarioFileManager;
-import teo2sm.model.SceneData;
 
 public class ScenarioManager {
 	private boolean opened;
@@ -28,9 +27,7 @@ public class ScenarioManager {
 	
 	//load scenario in view
 	private void loadScenario() {
-		for(SceneData scene : scenario.getScenes()) {
-			app.getUI().showScene(scene.getSeqNumber());
-		}
+		app.getUI().showScenes(scenario);
 		app.getUI().setTitle(" - "+scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
