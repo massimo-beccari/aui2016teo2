@@ -31,7 +31,7 @@ public class ScenarioManager {
 		for(SceneData scene : scenario.getScenes()) {
 			app.getUI().showScene(scene.getSeqNumber());
 		}
-		app.getUI().setTitle(scenario.getTitle());
+		app.getUI().setTitle(" - "+scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
 	}
@@ -58,6 +58,7 @@ public class ScenarioManager {
 			case Constants.ACTION_CLOSE_SCENARIO:
 				opened = false;
 				app.getUI().setOpenedScenario(Constants.SCENARIO_CLOSED);
+				app.getUI().setTitle("");
 				app.getUI().hideClosedScenario();
 				break;
 			

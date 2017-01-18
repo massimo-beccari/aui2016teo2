@@ -49,7 +49,9 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 	public ScenarioData complete() throws IllegalStateException {
 		if(!completable())
 			throw new IllegalStateException();
-		loadSceneData((NewScenarioWizardPage2) pages.get(currentState), currentStateNum);
+		NewScenarioWizardPage2 lastPage = (NewScenarioWizardPage2) pages.get(currentState);
+		lastPage.onPageHidden();
+		loadSceneData(lastPage, currentStateNum);
 		for(int i = 1; i <= sceneNumber; i++)
 			result.getScenes().add(rawResult.get(i));
 		return result;
@@ -150,6 +152,7 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 		scene.setStoryPath(page.getStoryPath());
 		scene.setBackgroundMusicPath(page.getMusicPath());
 		scene.setProjectedContentPath(page.getVideoPath());
+		scene.setObjectImagePath(page.getImagePath());
 		scene.setRfidObjectTag(page.getRfidTag());
 		rawResult.put(n, scene);
 	}

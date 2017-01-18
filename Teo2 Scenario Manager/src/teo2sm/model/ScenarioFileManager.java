@@ -6,6 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
 import teo2sm.Constants;
@@ -50,7 +54,7 @@ public class ScenarioFileManager {
 			file = new RandomAccessFile(filePath, "r");
 			//check
 			String in = file.readLine();
-			if(!in.equals(Constants.FILE_EXTENSION)) {
+			if(!in.equals(Constants.FILE_EXTENSION_SCENARIO)) {
 				file.close();
 				return null;
 			}
@@ -85,10 +89,7 @@ public class ScenarioFileManager {
 					fl = new File(filePath+"_data/scene"+i);
 				if(!fl.exists())
 					throw new FileNotFoundException();
-				if(!checkDirectories(i)) {
-					throw new FileNotFoundException();
-				}
-				setupSceneFolders(sc, i);
+				setupSceneFiles(sc, i);
 				i++;
 			}
 		} catch (FileNotFoundException e) {
@@ -112,7 +113,7 @@ public class ScenarioFileManager {
         try {
         	FileWriter fw = new FileWriter(file);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(Constants.FILE_EXTENSION);
+            bw.write(Constants.FILE_EXTENSION_SCENARIO);
 			bw.newLine();
 			bw.write(scenario.getTitle());
 			bw.newLine();
@@ -145,7 +146,7 @@ public class ScenarioFileManager {
 		if(!folder.exists())
 			folder.mkdir();
 		int i = 1;
-		for(@SuppressWarnings("unused") SceneData scene : scenario.getScenes()) {
+		for(SceneData scene : scenario.getScenes()) {
 			//scene folder
 			if(i<10)
 				folder = new File(filePath+"_data/scene0"+i);
@@ -155,77 +156,67 @@ public class ScenarioFileManager {
 				created = folder.mkdir();
 				outcome = outcome && created;
 			}
-			if(!createSceneFolders(i))
-				throw new IOException("Error in creating scene folders.");
-			//TODO copy multimedia file into foders
+			if(!createSceneFiles(scene, i-1))
+				throw new IOException("Error in copying scene files.");
 			i++;
 		}
 		return outcome;
 	}
 	
-	private boolean createSceneFolders(int i) {
-		File folder;
-		boolean created, outcome = true;
-		//story folder
-		if(i<10)
-			folder = new File(filePath+"_data/scene0"+i+"/story");
-		else
-			folder = new File(filePath+"_data/scene"+i+"/story");
-		if(!folder.exists()) {
-			created = folder.mkdir();
-			outcome = outcome && created;
-		}
-		//music folder
-		if(i<10)
-			folder = new File(filePath+"_data/scene0"+i+"/music");
-		else
-			folder = new File(filePath+"_data/scene"+i+"/music");
-		if(!folder.exists()) {
-			created = folder.mkdir();
-			outcome = outcome && created;
-		}
-		//video folder
-		if(i<10)
-			folder = new File(filePath+"_data/scene0"+i+"/video");
-		else
-			folder = new File(filePath+"_data/scene"+i+"/video");
-		if(!folder.exists()) {
-			created = folder.mkdir();
-			outcome = outcome && created;
-		}
-		return outcome;
-	}
-	
-	private boolean checkDirectories(int i) {
+	private boolean createSceneFiles(SceneData scene, int i) {
 		boolean outcome = true;
-		File folder;
 		if(i<10) {
-			folder = new File(filePath+"_data/scene0"+i+"/story");
-			outcome = outcome && folder.exists();
-			folder = new File(filePath+"_data/scene0"+i+"/music");
-			outcome = outcome && folder.exists();
-			folder = new File(filePath+"_data/scene0"+i+"/video");
-			outcome = outcome && folder.exists();
+			try {
+				Files.copy(Paths.get(scenario.getScenes().get(i).getStoryPath()), 
+						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getBackgroundMusicPath()), 
+						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
+						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getObjectImagePath()), 
+						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				outcome = false;
+				e.printStackTrace();
+			}
 		} else {
-			folder = new File(filePath+"_data/scene"+i+"/story");
-			outcome = outcome && folder.exists();
-			folder = new File(filePath+"_data/scene"+i+"/music");
-			outcome = outcome && folder.exists();
-			folder = new File(filePath+"_data/scene"+i+"/video");
-			outcome = outcome && folder.exists();
+			try {
+				Files.copy(Paths.get(scenario.getScenes().get(i).getStoryPath()), 
+						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getBackgroundMusicPath()), 
+						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
+						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(Paths.get(scenario.getScenes().get(i).getObjectImagePath()), 
+						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE), 
+						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				outcome = false;
+				e.printStackTrace();
+			}
 		}
+		
 		return outcome;
 	}
 
-	private void setupSceneFolders(SceneData scene, int i) {
+	private void setupSceneFiles(SceneData scene, int i) {
 		if(i<10) {
-			scene.setStoryPath(filePath+"_data/scene0"+i+"/story");
-			scene.setBackgroundMusicPath(filePath+"_data/scene0"+i+"/music");
-			scene.setProjectedContentPath(filePath+"_data/scene0"+i+"/video");
+			scene.setStoryPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
+			scene.setBackgroundMusicPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC);
+			scene.setProjectedContentPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
+			scene.setObjectImagePath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		} else {
-			scene.setStoryPath(filePath+"_data/scene"+i+"/story");
-			scene.setBackgroundMusicPath(filePath+"_data/scene"+i+"/music");
-			scene.setProjectedContentPath(filePath+"_data/scene"+i+"/video");
+			scene.setStoryPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
+			scene.setBackgroundMusicPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC);
+			scene.setProjectedContentPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
+			scene.setObjectImagePath(filePath+"_data/scene"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		}
 	}
 	

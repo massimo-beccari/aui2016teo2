@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import teo2sm.Constants;
 
@@ -18,22 +19,31 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	private JLabel storyLabel;
 	private JLabel musicLabel;
 	private JLabel videoLabel;
+	private JLabel imageLabel;
 	private JLabel tagLabel;
 	private JTextField storyText;
 	private JTextField musicText;
 	private JTextField videoText;
+	private JTextField imageText;
 	private JTextField tagText;
 	private JButton storyButton;
 	private JButton musicButton;
 	private JButton videoButton;
+	private JButton imageButton;
 	private String storyPath;
 	private String musicPath;
 	private String videoPath;
+	private String imagePath;
 	private String rfidTag;
 	private boolean error;
 	
 	public NewScenarioWizardPage2() {
 		error = false;
+		storyPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		musicPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		videoPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		imagePath = Constants.SCENE_DEFAULT_PATH_NAME;
+		rfidTag = Constants.SCENE_DEFAULT_PATH_NAME;
 	}
 	
 	@Override
@@ -51,20 +61,21 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		} catch(NumberFormatException e) {
 			error = true;
 		}
-		if(rfidTag == null || storyPath == null || musicPath == null || videoPath == null)
+		if(imagePath == null || storyPath == null || musicPath == null || videoPath == null)
 			error = true;
 	}
 	
-	protected String askFile() {
+	protected String askFile(String extension) {
 		final JFileChooser fc = new JFileChooser();
 		fc.setDialogTitle("Open file...");
 		fc.setApproveButtonText("Open");
+		fc.setFileFilter(new FileNameExtensionFilter("."+extension+" file", extension));
 		int returnVal = fc.showOpenDialog(this);
 		File file = null;
 		
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
-            return new String(file.getAbsolutePath()+Constants.FILE_EXTENSION);
+            return new String(file.getAbsolutePath());
         }
         
 		return null;
@@ -77,21 +88,26 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		storyLabel = new JLabel("Story audio file:");
 		musicLabel = new JLabel("Background music audio file:");
 		videoLabel = new JLabel("Projected content video file:");
+		imageLabel = new JLabel("Object image file:");
 		tagLabel = new JLabel("RFID tag:");
 		storyText = new JTextField();
 		musicText = new JTextField();
 		videoText = new JTextField();
+		imageText = new JTextField();
 		tagText = new JTextField();
 		storyButton = new JButton("Choose file");
 		musicButton = new JButton("Choose file");
 		videoButton = new JButton("Choose file");
+		imageButton = new JButton("Choose file");
 		storyText.setEnabled(false);
 		musicText.setEnabled(false);
 		videoText.setEnabled(false);
-		NewScenarioWizardPage2Handler handler = new NewScenarioWizardPage2Handler(this, storyButton, musicButton, videoButton);
+		imageText.setEnabled(false);
+		NewScenarioWizardPage2Handler handler = new NewScenarioWizardPage2Handler(this, storyButton, musicButton, videoButton, imageButton);
 		storyButton.addActionListener(handler);
 		musicButton.addActionListener(handler);
 		videoButton.addActionListener(handler);
+		imageButton.addActionListener(handler);
 		
 		this.add(Box.createRigidArea(new Dimension(0, 20)));
 		this.add(storyLabel);
@@ -105,6 +121,10 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		this.add(videoLabel);
 		this.add(videoText);
 		this.add(videoButton);
+		this.add(Box.createRigidArea(new Dimension(0, 10)));
+		this.add(imageLabel);
+		this.add(imageText);
+		this.add(imageButton);
 		this.add(Box.createRigidArea(new Dimension(0, 10)));
 		this.add(tagLabel);
 		this.add(tagText);
@@ -130,10 +150,10 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		this.videoPath = videoPath;
 		this.videoText.setText(videoPath);
 	}
-
-	protected void setRfidTag(String rfidTag) {
-		this.tagText.setText(rfidTag);
-		this.rfidTag = rfidTag;
+	
+	protected void setImageText(String imagePath) {
+		this.imagePath = imagePath;
+		this.imageText.setText(imagePath);
 	}
 
 	public String getStoryPath() {
@@ -146,6 +166,10 @@ public class NewScenarioWizardPage2 extends WizardPage {
 
 	public String getVideoPath() {
 		return videoPath;
+	}
+	
+	public String getImagePath() {
+		return imagePath;
 	}
 
 	public String getRfidTag() {

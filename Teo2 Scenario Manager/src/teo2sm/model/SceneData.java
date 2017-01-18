@@ -1,13 +1,23 @@
 package teo2sm.model;
 
+import teo2sm.Constants;
+
 public class SceneData {
 	private int seqNumber;
 	private String backgroundMusicPath;
 	private String storyPath;
 	private String projectedContentPath;
+	private String objectImagePath;
 	private String rfidObjectTag;
 	
-	public SceneData() { }
+	public SceneData() {
+		seqNumber = 0;
+		storyPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		backgroundMusicPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		projectedContentPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		objectImagePath = Constants.SCENE_DEFAULT_PATH_NAME;
+		rfidObjectTag = Constants.SCENE_DEFAULT_PATH_NAME;
+	}
 
 	public String getBackgroundMusicPath() {
 		return backgroundMusicPath;
@@ -31,6 +41,14 @@ public class SceneData {
 
 	public void setProjectedContentPath(String projectedContentPath) {
 		this.projectedContentPath = projectedContentPath;
+	}
+
+	public String getObjectImagePath() {
+		return objectImagePath;
+	}
+
+	public void setObjectImagePath(String objectImagePath) {
+		this.objectImagePath = objectImagePath;
 	}
 
 	public String getRfidObjectTag() {

@@ -58,6 +58,7 @@ import teo2sm.view.wizard.WizardModelChangeEvent;
          */
         public Wizard(WizardModel<T> model, Consumer<T> completionCallback) {
             dialog.setBounds(100, 100, 450, 450);
+            dialog.setResizable(false);
             dialog.getContentPane().setLayout(new BorderLayout());
             this.layout = new CardLayout();
             contentPanel.setLayout(layout);
@@ -104,6 +105,7 @@ import teo2sm.view.wizard.WizardModelChangeEvent;
                 model.forward();
                 break;
             case "Cancel":
+            	completionCallback.accept(null);
                 dialog.dispose();
                 break;
             case "Back":

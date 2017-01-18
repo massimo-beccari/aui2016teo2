@@ -264,7 +264,11 @@ public class GUI implements UserInterface, Runnable {
 		
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fc.getSelectedFile();
-            return new String(file.getAbsolutePath()+Constants.FILE_EXTENSION);
+            String path = file.getAbsolutePath();
+            if(path.endsWith(Constants.FILE_EXTENSION_SCENARIO))
+            	return new String(file.getAbsolutePath());
+            else
+            	return new String(file.getAbsolutePath()+Constants.FILE_EXTENSION_SCENARIO);
         }
         
 		return null;
@@ -296,7 +300,7 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public void setTitle(String title) {
-		mainFrame.setTitle(Constants.WINDOW_TITLE+" - "+title);
+		mainFrame.setTitle(Constants.WINDOW_TITLE+title);
 	}
 
 	@Override
