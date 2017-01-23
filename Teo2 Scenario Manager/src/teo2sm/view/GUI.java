@@ -35,6 +35,7 @@ import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.ScenarioFileManager;
 import teo2sm.model.SceneData;
+import teo2sm.model.TeoAction;
 import teo2sm.view.wizard.NewScenarioWizardCallback;
 import teo2sm.view.wizard.NewScenarioWizardModel;
 import teo2sm.view.wizard.Wizard;
@@ -234,12 +235,12 @@ public class GUI implements UserInterface, Runnable {
 
 	@Override
 	public void showFileNotFound(String filePath) {
-		JOptionPane.showMessageDialog(mainFrame, "File "+filePath+" non trovato.");
+		JOptionPane.showMessageDialog(mainFrame, "File "+filePath+" not found.");
 	}
 
 	@Override
 	public void showCannotCreateFile(String filePath) {
-		JOptionPane.showMessageDialog(mainFrame, "Impossibile creare il file.");
+		JOptionPane.showMessageDialog(mainFrame, "Impossible to create the file.");
 	}
 
 	@Override
@@ -302,11 +303,15 @@ public class GUI implements UserInterface, Runnable {
 	}
 	
 	private void showScene(SceneData scene) {
-		JLabel sceneLabel = new JLabel("scene "+scene.getSeqNumber(), new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
+		JLabel sceneLabel = new JLabel("scene " + scene.getSeqNumber(), 
+				new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
 		sceneLabels.add(sceneLabel);
 		sceneLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		sceneLabel.setHorizontalTextPosition(JLabel.CENTER);
-		sceneLabel.setToolTipText("RFID tag: "+scene.getRfidObjectTag());
+		String actions = "";
+		for(TeoAction action : scene.getActions())
+			actions = actions + action.toString() + " ";
+		sceneLabel.setToolTipText("RFID tag: " + scene.getRfidObjectTag() + " - Actions: " + actions);
 		displayedSceneNumber = displayedSceneNumber + 1;
 		final int MAX_SCENE_FOR_ROW = 8;
 		if((displayedSceneNumber - 1) % MAX_SCENE_FOR_ROW == 0)
@@ -350,6 +355,23 @@ public class GUI implements UserInterface, Runnable {
 		Wizard<ScenarioData> wizard = new Wizard<ScenarioData>(model, callback);
 		wizard.startWizard();
 		return callback.getScenario();
+	}
+
+	@Override
+	public void showInvalidPlayOperation(int code) {
+		switch(code) {
+			case Constants.ACTION_PLAY_SCENARIO:
+				JOptionPane.showMessageDialog(mainFrame, "Invalid operation: play.");
+				break;
+				
+			case Constants.ACTION_PAUSE_SCENARIO:
+				JOptionPane.showMessageDialog(mainFrame, "Invalid operation: pause.");
+				break;
+				
+			case Constants.ACTION_STOP_SCENARIO:
+				JOptionPane.showMessageDialog(mainFrame, "Invalid operation: stop.");
+				break;
+		}
 	}
 
 	public void setUserBool(boolean userBool) {

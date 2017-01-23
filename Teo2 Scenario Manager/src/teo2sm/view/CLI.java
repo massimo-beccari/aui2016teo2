@@ -67,4 +67,10 @@ public class CLI implements UserInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void showInvalidPlayOperation(int code) {
+		// TODO Auto-generated method stub
+		
+	}
 }

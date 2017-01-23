@@ -1,5 +1,7 @@
 package teo2sm.model;
 
+import java.util.ArrayList;
+
 import teo2sm.Constants;
 
 public class SceneData {
@@ -9,6 +11,7 @@ public class SceneData {
 	private String projectedContentPath;
 	private String objectImagePath;
 	private String rfidObjectTag;
+	private ArrayList<TeoAction> actions;
 	
 	public SceneData() {
 		seqNumber = 0;
@@ -17,6 +20,7 @@ public class SceneData {
 		projectedContentPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		objectImagePath = Constants.SCENE_DEFAULT_PATH_NAME;
 		rfidObjectTag = Constants.SCENE_DEFAULT_PATH_NAME;
+		actions = new ArrayList<TeoAction>();
 	}
 
 	public String getBackgroundMusicPath() {
@@ -65,5 +69,9 @@ public class SceneData {
 
 	public void setSeqNumber(int seqNumber) {
 		this.seqNumber = seqNumber;
+	}
+
+	public ArrayList<TeoAction> getActions() {
+		return actions;
 	}
 }

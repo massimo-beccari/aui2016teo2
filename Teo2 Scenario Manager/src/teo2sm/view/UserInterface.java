@@ -1,7 +1,6 @@
 package teo2sm.view;
 
 import teo2sm.model.ScenarioData;
-import teo2sm.model.SceneData;
 
 public interface UserInterface {
 	
@@ -26,4 +25,6 @@ public interface UserInterface {
 	public void hideClosedScenario();
 	
 	public ScenarioData createScenarioWizard();
+	
+	public void showInvalidPlayOperation(int code);
 }

@@ -9,11 +9,15 @@ public class ScenarioManager {
 	private boolean opened;
 	private AppRefs app;
 	private ScenarioData scenario;
+	private boolean isPlaying;
+	private PlayManager playManager;
 	
 	public ScenarioManager(AppRefs app, ScenarioData scenario) {
 		opened = true;
 		this.app = app;
 		this.scenario = scenario;
+		isPlaying = false;
+		playManager = null;
 	}
 	
 	public void manageScenario() {
@@ -37,15 +41,27 @@ public class ScenarioManager {
 	private void manageAction(int action) {
 		switch(action) {
 			case Constants.ACTION_PLAY_SCENARIO:
-				managePlay();
+				try {
+					managePlay();
+				} catch (Exception e) {
+					app.getUI().showInvalidPlayOperation(Constants.ACTION_PLAY_SCENARIO);
+				}
 				break;
 				
 			case Constants.ACTION_PAUSE_SCENARIO:
+			try {
 				managePause();
+			} catch (Exception e) {
+				app.getUI().showInvalidPlayOperation(Constants.ACTION_PAUSE_SCENARIO);
+			}
 				break;
 				
 			case Constants.ACTION_STOP_SCENARIO:
+			try {
 				manageStop();
+			} catch (Exception e) {
+				app.getUI().showInvalidPlayOperation(Constants.ACTION_STOP_SCENARIO);
+			}
 				break;
 			
 			case Constants.ACTION_SAVE_SCENARIO:
@@ -65,19 +81,28 @@ public class ScenarioManager {
 	}
 	
 	//manage scenario play
-	private void managePlay() {
+	private void managePlay() throws Exception {
+		if(isPlaying)
+			throw new Exception();
+		isPlaying = true;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
-		
+		playManager = new PlayManager(app);
+		playManager.start();
 	}
 	
 	//manage scenario pause
-	private void managePause() {
+	private void managePause() throws Exception {
+		if(!isPlaying)
+			throw new Exception();
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PAUSED);
 			
 	}
 		
 	//manage scenario stop
-	private void manageStop() {
+	private void manageStop() throws Exception {
+		if(!isPlaying)
+			throw new Exception();
+		isPlaying = false;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 			
 	}

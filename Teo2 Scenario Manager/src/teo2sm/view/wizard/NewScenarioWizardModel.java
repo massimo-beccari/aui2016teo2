@@ -3,12 +3,16 @@ package teo2sm.view.wizard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import javax.swing.event.ChangeListener;
 
 import teo2sm.Constants;
+import teo2sm.model.ActionTime;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
+import teo2sm.model.TeoAction;
 
 public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 	private Map<String, WizardPage> pages;
@@ -154,7 +158,34 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 		scene.setProjectedContentPath(page.getVideoPath());
 		scene.setObjectImagePath(page.getImagePath());
 		scene.setRfidObjectTag(page.getRfidTag());
+		setActions(page, scene);
 		rawResult.put(n, scene);
+	}
+	
+	private void setActions(NewScenarioWizardPage2 page, SceneData scene) {
+		String actionsString = page.getActions();
+		Scanner sc1 = new Scanner(actionsString);
+		sc1.useDelimiter(" ");
+		String actionString = sc1.next();
+		boolean ended = false;
+		while(!ended) {
+			Scanner sc2 = new Scanner(actionString);
+			sc2.useDelimiter("_");
+			String s = sc2.next();
+			ActionTime actionTime = new ActionTime(s);
+			sc2.skip("_");
+			sc2.useDelimiter(" ");
+			s = sc2.next();
+			TeoAction action = new TeoAction(s, actionTime);
+			sc2.close();
+			scene.getActions().add(action);
+			try {
+				actionString = sc1.next();
+			} catch(NoSuchElementException e) {
+				ended = true;
+			}
+		}
+		sc1.close();
 	}
 	
 	/*private void reloadPage(int n) {

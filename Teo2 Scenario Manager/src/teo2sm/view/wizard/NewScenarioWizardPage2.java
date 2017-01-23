@@ -21,11 +21,13 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	private JLabel videoLabel;
 	private JLabel imageLabel;
 	private JLabel tagLabel;
+	private JLabel actionsLabel;
 	private JTextField storyText;
 	private JTextField musicText;
 	private JTextField videoText;
 	private JTextField imageText;
 	private JTextField tagText;
+	private JTextField actionsText;
 	private JButton storyButton;
 	private JButton musicButton;
 	private JButton videoButton;
@@ -35,6 +37,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	private String videoPath;
 	private String imagePath;
 	private String rfidTag;
+	private String actions;
 	private boolean error;
 	
 	public NewScenarioWizardPage2() {
@@ -44,6 +47,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		videoPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		imagePath = Constants.SCENE_DEFAULT_PATH_NAME;
 		rfidTag = Constants.SCENE_DEFAULT_PATH_NAME;
+		actions = Constants.SCENE_DEFAULT_PATH_NAME;
 	}
 	
 	@Override
@@ -56,6 +60,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	public void onPageHidden() {
 		try {
 			rfidTag = tagText.getText();
+			actions = actionsText.getText();
 		} catch(NullPointerException e) {
 			error = true;
 		} catch(NumberFormatException e) {
@@ -90,11 +95,13 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		videoLabel = new JLabel("Projected content video file:");
 		imageLabel = new JLabel("Object image file:");
 		tagLabel = new JLabel("RFID tag:");
+		actionsLabel = new JLabel("Teo actions:");
 		storyText = new JTextField();
 		musicText = new JTextField();
 		videoText = new JTextField();
 		imageText = new JTextField();
 		tagText = new JTextField();
+		actionsText = new JTextField();
 		storyButton = new JButton("Choose file");
 		musicButton = new JButton("Choose file");
 		videoButton = new JButton("Choose file");
@@ -128,6 +135,9 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		this.add(Box.createRigidArea(new Dimension(0, 10)));
 		this.add(tagLabel);
 		this.add(tagText);
+		this.add(Box.createRigidArea(new Dimension(0, 10)));
+		this.add(actionsLabel);
+		this.add(actionsText);
 		this.updateUI();
 	}
 
@@ -174,5 +184,9 @@ public class NewScenarioWizardPage2 extends WizardPage {
 
 	public String getRfidTag() {
 		return rfidTag;
+	}
+	
+	public String getActions() {
+		return actions;
 	}
 }

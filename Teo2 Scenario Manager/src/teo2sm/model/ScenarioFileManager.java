@@ -10,6 +10,8 @@ import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import teo2sm.Constants;
@@ -70,7 +72,8 @@ public class ScenarioFileManager {
 				s = new Scanner(in);
 				scene.setRfidObjectTag(s.next());
 				in = file.readLine();
-				//TODO lettura azioni teo
+				//lettura azioni teo
+				setActions(in, scene);
 				s.close();
 				scenario.getScenes().add(scene);
 				in = file.readLine();
@@ -102,6 +105,31 @@ public class ScenarioFileManager {
 		return scenario;
 	}
 	
+	private void setActions(String actionsString, SceneData scene) {
+		Scanner sc1 = new Scanner(actionsString);
+		sc1.useDelimiter(" ");
+		String actionString = sc1.next();
+		boolean ended = false;
+		while(!ended) {
+			Scanner sc2 = new Scanner(actionString);
+			sc2.useDelimiter("_");
+			String s = sc2.next();
+			ActionTime actionTime = new ActionTime(s);
+			sc2.skip("_");
+			sc2.useDelimiter(" ");
+			s = sc2.next();
+			TeoAction action = new TeoAction(s, actionTime);
+			sc2.close();
+			scene.getActions().add(action);
+			try {
+				actionString = sc1.next();
+			} catch(NoSuchElementException e) {
+				ended = true;
+			}
+		}
+		sc1.close();
+	}
+	
 	//WARNING: call this method only in WRITE mode
 	/**
 	 * Write the class attribute scenario to a file (class attribute filePath)
@@ -120,7 +148,16 @@ public class ScenarioFileManager {
 			for(SceneData scene : scenario.getScenes()) {
 				bw.write(scene.getRfidObjectTag());
 				bw.newLine();
-				//TODO scrittura azioni teo
+				//scrittura azioni teo
+				for(Iterator<TeoAction> iterator = scene.getActions().iterator(); iterator.hasNext(); ) {
+					TeoAction action = iterator.next();
+					String actionString;
+					if(iterator.hasNext())
+						actionString = action.getActionTime().toString() + "_" + action.getActionID() + " ";
+					else
+						actionString = action.getActionTime().toString() + "_" + action.getActionID();
+					bw.write(actionString);
+				}
 				bw.newLine();
 			}
 			bw.flush();

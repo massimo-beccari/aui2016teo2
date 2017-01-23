@@ -57,7 +57,7 @@ import teo2sm.view.wizard.WizardModelChangeEvent;
          *            called when the wizard completes
          */
         public Wizard(WizardModel<T> model, Consumer<T> completionCallback) {
-            dialog.setBounds(100, 100, 450, 450);
+            dialog.setBounds(100, 100, 450, 500);
             dialog.setResizable(false);
             dialog.getContentPane().setLayout(new BorderLayout());
             this.layout = new CardLayout();
