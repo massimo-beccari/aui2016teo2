@@ -158,11 +158,16 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 		scene.setProjectedContentPath(page.getVideoPath());
 		scene.setObjectImagePath(page.getImagePath());
 		scene.setRfidObjectTag(page.getRfidTag());
-		setActions(page, scene);
+		try {
+			setActions(page, scene);
+		} catch (Exception e) {
+			System.err.println("Non dovrei mai finire qui O.O");
+			e.printStackTrace();
+		}
 		rawResult.put(n, scene);
 	}
 	
-	private void setActions(NewScenarioWizardPage2 page, SceneData scene) {
+	private void setActions(NewScenarioWizardPage2 page, SceneData scene) throws Exception {
 		String actionsString = page.getActions();
 		Scanner sc1 = new Scanner(actionsString);
 		sc1.useDelimiter(" ");

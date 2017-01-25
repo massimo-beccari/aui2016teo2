@@ -1,8 +1,11 @@
 package teo2sm.controller;
 
+import java.io.File;
+
 import teo2sm.AppRefs;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
+import teo2sm.model.SceneData;
 import teo2sm.model.ScenarioFileManager;
 
 public class ScenarioManager {
@@ -11,6 +14,7 @@ public class ScenarioManager {
 	private ScenarioData scenario;
 	private boolean isPlaying;
 	private PlayManager playManager;
+	private int duration;
 	
 	public ScenarioManager(AppRefs app, ScenarioData scenario) {
 		opened = true;
@@ -18,10 +22,19 @@ public class ScenarioManager {
 		this.scenario = scenario;
 		isPlaying = false;
 		playManager = null;
+		setDuration();
+	}
+	
+	private void setDuration() {
+		duration = 300;
+		for(SceneData scene : scenario.getScenes()) {
+			
+		}
 	}
 	
 	public void manageScenario() {
 		loadScenario();
+		app.getUI().showTimeSlider(duration);
 		int action;
 		do {
 			action = app.getUI().waitForUserAction();
@@ -88,6 +101,7 @@ public class ScenarioManager {
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		playManager = new PlayManager(app);
 		playManager.start();
+		playManager.playScenario();
 	}
 	
 	//manage scenario pause

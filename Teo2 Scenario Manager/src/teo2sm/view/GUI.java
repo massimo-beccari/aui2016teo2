@@ -1,6 +1,5 @@
 package teo2sm.view;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -55,6 +54,7 @@ public class GUI implements UserInterface, Runnable {
 	private MainToolBar toolBar;
 	private JMenu menuFile;
 	private JMenu menuScenario;
+	private TimeSlider timeSlider;
 	private ArrayList<JLabel> sceneLabels;
 	private int displayedSceneNumber;
 	
@@ -80,11 +80,7 @@ public class GUI implements UserInterface, Runnable {
 		setupMenuBar();
 		
 		//tool bar
-		setupToolBar();
-		
-		//TEST
-		
-		//END TEST
+		setupToolBar();		
 		
 		//mainFrame.pack();
 		mainFrame.setSize(Constants.DEFAULT_WINDOW_WIDTH, Constants.DEFAULT_WINDOW_HEIGHT);
@@ -343,6 +339,7 @@ public class GUI implements UserInterface, Runnable {
 	public void hideClosedScenario() {
 		for(JPanel panel : scenarioPanels)
 			mainPanel.remove(panel);
+		mainPanel.remove(timeSlider);
 		displayedSceneNumber = 0;
 		setupScenarioPanel(0);
 		mainPanel.repaint();
@@ -372,6 +369,14 @@ public class GUI implements UserInterface, Runnable {
 				JOptionPane.showMessageDialog(mainFrame, "Invalid operation: stop.");
 				break;
 		}
+	}
+
+	@Override
+	public void showTimeSlider(int maxTime) {
+		timeSlider = new TimeSlider(maxTime);
+		layout.putConstraint(SpringLayout.SOUTH, timeSlider, 0, SpringLayout.SOUTH, mainPanel);
+		mainPanel.add(timeSlider);
+		mainPanel.updateUI();
 	}
 
 	public void setUserBool(boolean userBool) {

@@ -27,4 +27,6 @@ public interface UserInterface {
 	public ScenarioData createScenarioWizard();
 	
 	public void showInvalidPlayOperation(int code);
+	
+	public void showTimeSlider(int maxTime);
 }

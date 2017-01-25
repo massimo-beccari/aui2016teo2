@@ -1,22 +1,22 @@
 package teo2sm.controller;
 
-import java.sql.Time;
+import teo2sm.model.ActionTime;
 
 public interface CommInterface {
 	/*blocco di funzioni per proiettore, casse, altoparlante bluetooth*/
 	/*le funzioni ritornano un oggetto di tipo Time con il tempo in cui la riproduzione è o è stata interrotta
 	 * non so se sia una buona idea, poi vedremo*/
-	public Time playVideo();
+	public ActionTime playVideo();
 	
-	public Time pauseVideo();
+	public ActionTime pauseVideo();
 	
-	public Time playStory();
+	public ActionTime playStory();
 	
-	public Time pauseStory();
+	public ActionTime pauseStory();
 	
-	public Time playMusic();
+	public ActionTime playMusic();
 	
-	public Time pauseMusic();
+	public ActionTime pauseMusic();
 	
 	/*blocco funzioni comandi bluetooth*/
 	/**

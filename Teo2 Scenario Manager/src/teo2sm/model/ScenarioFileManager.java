@@ -73,7 +73,12 @@ public class ScenarioFileManager {
 				scene.setRfidObjectTag(s.next());
 				in = file.readLine();
 				//lettura azioni teo
-				setActions(in, scene);
+				try {
+					setActions(in, scene);
+				} catch (Exception e) {
+					//in teoria non dovrei mai finire qui
+					e.printStackTrace();
+				}
 				s.close();
 				scenario.getScenes().add(scene);
 				in = file.readLine();
@@ -105,7 +110,7 @@ public class ScenarioFileManager {
 		return scenario;
 	}
 	
-	private void setActions(String actionsString, SceneData scene) {
+	private void setActions(String actionsString, SceneData scene) throws Exception {
 		Scanner sc1 = new Scanner(actionsString);
 		sc1.useDelimiter(" ");
 		String actionString = sc1.next();
