@@ -122,7 +122,7 @@ public class BlueTest {
         OutputStream os = streamConnection.openOutputStream();
         InputStream is = streamConnection.openInputStream();
 
-        os.write(" va beh".getBytes()); //just send '1' to the device
+        os.write("prova1\r".getBytes()); //just send '1' to the device
         os.close();
         is.close();
         streamConnection.close();

@@ -14,6 +14,7 @@ public class CommConstants {
 	public static final int COMM_MOOD_ANGRY = 32;
 	public static final int COMM_MOOD_SCARED = 33;
 	public static final int COMM_MOOD_HAPPY = 34;
-	
+	//bluetooth
 	public static final String BLUETOOTH_ADDRESS = "98D331FD381F";
+	public static final String COMMAND_TERMINATOR = "\r";
 }
