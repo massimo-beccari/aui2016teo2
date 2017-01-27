@@ -29,4 +29,6 @@ public interface UserInterface {
 	public void showInvalidPlayOperation(int code);
 	
 	public void showTimeSlider(int maxTime);
+	
+	public void updateTimeSlider(int time);
 }

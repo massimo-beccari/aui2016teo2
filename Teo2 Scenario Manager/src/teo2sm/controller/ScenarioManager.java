@@ -1,11 +1,8 @@
 package teo2sm.controller;
 
-import java.io.File;
-
 import teo2sm.AppRefs;
 import teo2sm.Constants;
 import teo2sm.model.ScenarioData;
-import teo2sm.model.SceneData;
 import teo2sm.model.ScenarioFileManager;
 
 public class ScenarioManager {
@@ -14,7 +11,6 @@ public class ScenarioManager {
 	private ScenarioData scenario;
 	private boolean isPlaying;
 	private PlayManager playManager;
-	private int duration;
 	
 	public ScenarioManager(AppRefs app, ScenarioData scenario) {
 		opened = true;
@@ -22,19 +18,10 @@ public class ScenarioManager {
 		this.scenario = scenario;
 		isPlaying = false;
 		playManager = null;
-		setDuration();
-	}
-	
-	private void setDuration() {
-		duration = 300;
-		for(SceneData scene : scenario.getScenes()) {
-			
-		}
 	}
 	
 	public void manageScenario() {
 		loadScenario();
-		app.getUI().showTimeSlider(duration);
 		int action;
 		do {
 			action = app.getUI().waitForUserAction();
@@ -48,6 +35,8 @@ public class ScenarioManager {
 		app.getUI().setTitle(" - "+scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
+		playManager = new PlayManager(app, this, scenario);
+		playManager.start();
 	}
 	
 	//manage user actions
@@ -83,6 +72,7 @@ public class ScenarioManager {
 				
 			case Constants.ACTION_CLOSE_SCENARIO:
 				opened = false;
+				playManager.setOpened(false);
 				app.getUI().setOpenedScenario(Constants.SCENARIO_CLOSED);
 				app.getUI().setTitle("");
 				app.getUI().hideClosedScenario();
@@ -99,8 +89,6 @@ public class ScenarioManager {
 			throw new Exception();
 		isPlaying = true;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
-		playManager = new PlayManager(app);
-		playManager.start();
 		playManager.playScenario();
 	}
 	
@@ -108,8 +96,9 @@ public class ScenarioManager {
 	private void managePause() throws Exception {
 		if(!isPlaying)
 			throw new Exception();
+		isPlaying = false;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PAUSED);
-			
+		playManager.pauseScenario();
 	}
 		
 	//manage scenario stop
@@ -118,7 +107,7 @@ public class ScenarioManager {
 			throw new Exception();
 		isPlaying = false;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
-			
+		playManager.stopScenario();
 	}
 	
 	//manage scenario save
@@ -131,5 +120,9 @@ public class ScenarioManager {
 			if(!outcome)
 				app.getUI().showCannotCreateFile(filePath);
 		}
+	}
+
+	public void setPlaying(boolean isPlaying) {
+		this.isPlaying = isPlaying;
 	}
 }

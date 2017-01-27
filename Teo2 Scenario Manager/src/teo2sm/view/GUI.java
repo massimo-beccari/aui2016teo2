@@ -378,6 +378,11 @@ public class GUI implements UserInterface, Runnable {
 		mainPanel.add(timeSlider);
 		mainPanel.updateUI();
 	}
+	
+	@Override
+	public void updateTimeSlider(int time) {
+		//TODO
+	}
 
 	public void setUserBool(boolean userBool) {
 		this.userBool = userBool;
