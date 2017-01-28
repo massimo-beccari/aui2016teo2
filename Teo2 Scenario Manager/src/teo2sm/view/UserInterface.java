@@ -1,5 +1,7 @@
 package teo2sm.view;
 
+import java.util.ArrayList;
+
 import teo2sm.model.ScenarioData;
 
 public interface UserInterface {
@@ -28,7 +30,7 @@ public interface UserInterface {
 	
 	public void showInvalidPlayOperation(int code);
 	
-	public void showTimeSlider(int maxTime);
+	public void showTimeSlider(ArrayList<Integer> times);
 	
-	public void updateTimeSlider(int time);
+	public void updateTimeSlider(int time, int sceneNumber);
 }

@@ -372,16 +372,16 @@ public class GUI implements UserInterface, Runnable {
 	}
 
 	@Override
-	public void showTimeSlider(int maxTime) {
-		timeSlider = new TimeSlider(maxTime);
+	public void showTimeSlider(ArrayList<Integer> times) {
+		timeSlider = new TimeSlider(times);
 		layout.putConstraint(SpringLayout.SOUTH, timeSlider, 0, SpringLayout.SOUTH, mainPanel);
 		mainPanel.add(timeSlider);
 		mainPanel.updateUI();
 	}
 	
 	@Override
-	public void updateTimeSlider(int time) {
-		//TODO
+	public void updateTimeSlider(int time, int sceneNumber) {
+		timeSlider.setValue(time, sceneNumber);
 	}
 
 	public void setUserBool(boolean userBool) {
