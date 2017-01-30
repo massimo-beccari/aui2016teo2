@@ -17,4 +17,10 @@ public class CommConstants {
 	//bluetooth
 	public static final String BLUETOOTH_ADDRESS = "98D331FD381F";
 	public static final String COMMAND_TERMINATOR = "\r";
+	//rfid
+	public static final String TAG_SCENE_1 = "TAG_1";
+	public static final String TAG_SCENE_2 = "TAG_2";
+	public static final String TAG_SCENE_3 = "TAG_3";
+	public static final String TAG_SCENE_4 = "TAG_4";
+	public static final String TAG_SCENE_5 = "TAG_5";
 }
