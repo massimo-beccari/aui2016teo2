@@ -12,7 +12,6 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 import javazoom.jlgui.basicplayer.BasicPlayerListener;
 import teo2sm.AppRefs;
 import teo2sm.Constants;
-import teo2sm.controller.multimedia.MusicPlayerListener;
 import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
@@ -24,9 +23,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	private Iterator<SceneData> sceneIterator;
 	private SceneData currentScene;
 	private BasicController storyController;
-	private BasicPlayer musicPlayer;
-	private BasicController musicController;
-	private MusicPlayerListener musicListener;
+	private VideoPlayer videoPlayer;
 	private boolean opened;
 	private int duration;
 	private int basePosition;
@@ -42,11 +39,8 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		this.scenario = scenario;
 		sceneIterator = scenario.getScenes().iterator();
 		currentScene = sceneIterator.next();
-		//music
-	    musicPlayer = new BasicPlayer();
-	    musicController = (BasicController) musicPlayer;
-		musicListener = new MusicPlayerListener(currentScene, musicPlayer);
-		musicListener.start();
+		//video player
+		videoPlayer = new VideoPlayer(currentScene.getProjectedContentPath());
 		//
 		opened = true;
 	    loadMp3();
@@ -126,6 +120,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 				e.printStackTrace();
 			}
 		}
+		videoPlayer.destroyWindow();
 		this.interrupt();
 	}
 
@@ -143,42 +138,22 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 
 	@Override
 	public void stateUpdated(BasicPlayerEvent e) {
-		/*if(e.getCode() == BasicPlayerEvent.PLAYING) {
-			try {
-				musicController.play();
-			} catch (BasicPlayerException e1) {
-				e1.printStackTrace();
-			}
+		if(e.getCode() == BasicPlayerEvent.PLAYING) {
+			videoPlayer.playVideo();
 		} else if(e.getCode() == BasicPlayerEvent.PAUSED) {
-			try {
-				musicController.pause();
-			} catch (BasicPlayerException e1) {
-				e1.printStackTrace();
-			}
+			videoPlayer.pauseVideo();
 		} else if(e.getCode() == BasicPlayerEvent.RESUMED) {
-			try {
-				musicController.resume();
-			} catch (BasicPlayerException e1) {
-				e1.printStackTrace();
-			}
-		} else */if(e.getCode() == BasicPlayerEvent.STOPPED) {
-			try {
-				musicController.stop();
-				reinitialize();
-			} catch (BasicPlayerException e1) {
-				e1.printStackTrace();
-			}
+			videoPlayer.resumeVideo();
+		} else if(e.getCode() == BasicPlayerEvent.STOPPED) {
+			videoPlayer.stopVideo();
+			reinitialize();
 		} else if(e.getCode() == BasicPlayerEvent.EOM) {
 			if(sceneIterator.hasNext()) {
 				basePosition = basePosition + calculateSceneDuration(currentScene);
 				currentScene = sceneIterator.next();
 				loadMp3();
-				try {
-					musicController.stop();
-				} catch (BasicPlayerException e1) {
-					e1.printStackTrace();
-				}
-				musicListener.setCurrentScene(currentScene);
+				videoPlayer.stopVideo();
+				videoPlayer.setVideoPath(currentScene.getProjectedContentPath());
 			} else {
 				//re initialization
 				reinitialize();

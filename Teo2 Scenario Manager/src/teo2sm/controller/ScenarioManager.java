@@ -15,7 +15,7 @@ public class ScenarioManager {
 	private boolean isPlaying;
 	private BasicPlayer storyPlayer;
 	private BasicController storyController;
-	private PlayManager storyListener;
+	private PlayManager playManager;
 	
 	public ScenarioManager(AppRefs app, ScenarioData scenario) {
 		opened = true;
@@ -24,7 +24,7 @@ public class ScenarioManager {
 		isPlaying = false;
 		storyPlayer = new BasicPlayer();
 		storyController = (BasicController) storyPlayer;
-		storyListener = new PlayManager(app, this, scenario, storyController);
+		playManager = new PlayManager(app, this, scenario, storyController);
 	}
 	
 	public void manageScenario() {
@@ -42,7 +42,7 @@ public class ScenarioManager {
 		app.getUI().setTitle(" - "+scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
-		storyListener.start();
+		playManager.start();
 	}
 	
 	//manage user actions
@@ -78,7 +78,7 @@ public class ScenarioManager {
 				
 			case Constants.ACTION_CLOSE_SCENARIO:
 				opened = false;
-				storyListener.setOpened(false);
+				playManager.setOpened(false);
 				app.getUI().setOpenedScenario(Constants.SCENARIO_CLOSED);
 				app.getUI().setPlayableScenario(Constants.SCENARIO_CLOSED);
 				app.getUI().setTitle("");
@@ -97,7 +97,7 @@ public class ScenarioManager {
 		isPlaying = true;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PLAYED);
-		if(storyListener.getPosition() < 1000)
+		if(playManager.getPosition() < 1000)
 			storyController.play();
 		else
 			storyController.resume();
