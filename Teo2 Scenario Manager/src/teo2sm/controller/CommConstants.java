@@ -16,11 +16,16 @@ public class CommConstants {
 	public static final int COMM_MOOD_HAPPY = 34;
 	//bluetooth
 	public static final String BLUETOOTH_ADDRESS = "98D331FD381F";
-	public static final String COMMAND_TERMINATOR = "\r";
+	public static final String COMMAND_EOL = "\r";
 	//rfid
 	public static final String TAG_SCENE_1 = "TAG_1";
 	public static final String TAG_SCENE_2 = "TAG_2";
 	public static final String TAG_SCENE_3 = "TAG_3";
 	public static final String TAG_SCENE_4 = "TAG_4";
 	public static final String TAG_SCENE_5 = "TAG_5";
+	//movement
+	public static final int MOV_OFF = 40;
+	public static final int MOV_VIBRATE = 41;
+	public static final int MOV_WALK_FRONT = 42;
+	public static final int MOV_WALK_BACK = 43;
 }

@@ -78,27 +78,94 @@ public class Communicator implements CommInterface {
 
 	@Override
 	public int waitChildInteraction() {
-		// TODO Auto-generated method stub
+		try {
+			openConnection();
+			int interaction = is.read();
+			closeConnection();
+			switch (interaction) {
+			case CommConstants.COMM_FSR_HUG:
+				return CommConstants.COMM_FSR_HUG;
+			case CommConstants.COMM_FSR_PUNCH:
+				return CommConstants.COMM_FSR_PUNCH;
+			case CommConstants.COMM_FSR_CARESS:
+				return CommConstants.COMM_FSR_CARESS;
+			default: 
+				return 0;
+			}
+		} catch (Exception e) {
+			//TODO
+		}
 		return 0;
 	}
 
 	@Override
 	public String waitRfidObject(String tag) {
 		// We need to know the current scene
-		
-		return null;
+		byte[] buffer = new byte[256]; 
+		openConnection();
+		// sending expected RFID tag name
+		os.write((ScenarioManager.currentScene+CommConstants.COMMAND_EOL).getBytes());
+		// reading result
+		int length = is.read(buffer);
+		closeConnection();
+		return new String(buffer, 1, length);
 	}
 
 	@Override
 	public void setTeoMood(int code) {
-		// TODO Auto-generated method stub
-
+		try {
+			openConnection();
+			switch (code) {
+			case CommConstants.COMM_MOOD_NEUTRAL:
+				os.write(("moodNeutral"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.COMM_MOOD_SAD:
+				os.write(("moodSad"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.COMM_MOOD_ANGRY:
+				os.write(("moodAngry"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.COMM_MOOD_SCARED:
+				os.write(("moodScared"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.COMM_MOOD_HAPPY:
+				os.write(("moodHappy"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			default: 
+				os.write(("moodNeutral"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			}
+			closeConnection();
+		} catch (Exception e) {
+			//TODO
+		}
 	}
 
 	@Override
 	public void sendTeoMovement(int code) {
-		// TODO Auto-generated method stub
-
+		try {
+			openConnection();
+			switch (code) {
+			case CommConstants.MOV_OFF:
+				os.write(("moveOff"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.MOV_VIBRATE:
+				os.write(("moveVibrate"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.MOV_WALK_FRONT:
+				os.write(("moveFront"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			case CommConstants.MOV_WALK_BACK:
+				os.write(("moveBack"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			default: 
+				os.write(("moveOff"+CommConstants.COMMAND_EOL).getBytes());
+				break;
+			}
+			closeConnection();
+		} catch (Exception e) {
+			//TODO
+		}
 	}
 
 }
