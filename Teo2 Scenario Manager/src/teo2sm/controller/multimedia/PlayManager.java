@@ -15,13 +15,16 @@ import teo2sm.Constants;
 import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
+import teo2sm.model.TeoAction;
 
 public class PlayManager extends Thread implements BasicPlayerListener {
 	private AppRefs app;
 	private ScenarioManager scenarioManager;
 	private ScenarioData scenario;
 	private Iterator<SceneData> sceneIterator;
+	private Iterator<TeoAction> actionIterator;
 	private SceneData currentScene;
+	private TeoAction currentAction;
 	private BasicController storyController;
 	private VideoPlayer videoPlayer;
 	private boolean opened;
@@ -35,12 +38,18 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		//story
 		this.storyController = storyController;
 	    ((BasicPlayer) storyController).addBasicPlayerListener(this);
-	    //
+	    //scenario, current scene, current action
 		this.scenario = scenario;
 		sceneIterator = scenario.getScenes().iterator();
 		currentScene = sceneIterator.next();
+		actionIterator = currentScene.getActions().iterator();
+		if(actionIterator.hasNext())
+			currentAction = actionIterator.next();
+		else
+			currentAction = null;
 		//video player
-		videoPlayer = new VideoPlayer(currentScene.getProjectedContentPath());
+		videoPlayer = new VideoPlayer(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
+		videoPlayer.start();
 		//
 		opened = true;
 	    loadMp3();
@@ -53,7 +62,6 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		try {
 	    	storyController.open(new File(currentScene.getStoryPath()));
 		} catch (BasicPlayerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -82,7 +90,6 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			int duration = byteLength * 8 / bitRate;
 			return duration;
 		} catch (BasicPlayerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return -1;
@@ -116,11 +123,10 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		videoPlayer.destroyWindow();
+		videoPlayer.closeWindow();
 		this.interrupt();
 	}
 
@@ -129,8 +135,16 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 
 	@Override
 	public void progress(int arg0, long arg1, byte[] arg2, @SuppressWarnings("rawtypes") Map prop) {
+		//position in milliseconds
 		position = (basePosition*1000) + ((int) (((long) prop.get("mp3.position.microseconds")) / 1000));
 		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
+		if((currentAction != null) && ((int)(currentAction.getActionTime().toLong()) > position)) {
+			app.getCommunicator().setTeoMood(/*TODO set mood code*/0);
+			if(actionIterator.hasNext())
+				currentAction = actionIterator.next();
+			else
+				currentAction = null;
+		}
 	}
 
 	@Override
@@ -151,9 +165,19 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			if(sceneIterator.hasNext()) {
 				basePosition = basePosition + calculateSceneDuration(currentScene);
 				currentScene = sceneIterator.next();
+				actionIterator = currentScene.getActions().iterator();
+				if(actionIterator.hasNext())
+					currentAction = actionIterator.next();
+				else
+					currentAction = null;
+				manageObjectInteraction();
+				videoPlayer.setPaths(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
 				loadMp3();
-				videoPlayer.stopVideo();
-				videoPlayer.setVideoPath(currentScene.getProjectedContentPath());
+				try {
+					storyController.play();
+				} catch (BasicPlayerException e1) {
+					e1.printStackTrace();
+				}
 			} else {
 				//re initialization
 				reinitialize();
@@ -171,6 +195,21 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		currentScene = sceneIterator.next();
 		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
 		loadMp3();
+	}
+	
+	private void manageObjectInteraction() {
+		String objectTag = app.getCommunicator().waitRfidObject();
+		videoPlayer.stopVideo();
+		while(!objectTag.equals(currentScene.getRfidObjectTag())) {
+			videoPlayer.switchToImage();
+			playAudioReinforcement();
+			objectTag = app.getCommunicator().waitRfidObject();
+		}
+		videoPlayer.switchToVideo();
+	}
+	
+	private void playAudioReinforcement() {
+		//TODO
 	}
 
 	public void setOpened(boolean opened) {

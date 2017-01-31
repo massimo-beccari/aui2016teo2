@@ -151,7 +151,7 @@ public class MainToolBar extends JPanel implements ActionListener {
 			case Constants.SCENARIO_PAUSED:
 	        	playButton.setEnabled(true);
 	        	pauseButton.setEnabled(false);
-	        	stopButton.setEnabled(true);
+	        	stopButton.setEnabled(false);
 	        	break;
 	        
 	        default:

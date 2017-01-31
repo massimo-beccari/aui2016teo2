@@ -1,18 +1,13 @@
 package teo2sm.view;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,17 +17,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import teo2sm.Constants;
-import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
-import teo2sm.model.ScenarioFileManager;
 import teo2sm.model.SceneData;
 import teo2sm.model.TeoAction;
 import teo2sm.view.wizard.NewScenarioWizardCallback;
@@ -54,6 +45,8 @@ public class GUI implements UserInterface, Runnable {
 	private MainToolBar toolBar;
 	private JMenu menuFile;
 	private JMenu menuScenario;
+	private JPanel statusPanel;
+	private JLabel statusLabel;
 	private TimeSlider timeSlider;
 	private ArrayList<JLabel> sceneLabels;
 	private int displayedSceneNumber;
@@ -76,11 +69,10 @@ public class GUI implements UserInterface, Runnable {
 		scenarioPanels = new ArrayList<JPanel>();
 		displayedSceneNumber = 0;
 		
-		//menu bar
+		//setup bars
 		setupMenuBar();
-		
-		//tool bar
-		setupToolBar();		
+		setupToolBar();
+		setupStatusBar();
 		
 		//mainFrame.pack();
 		mainFrame.setSize(Constants.DEFAULT_WINDOW_WIDTH, Constants.DEFAULT_WINDOW_HEIGHT);
@@ -88,6 +80,19 @@ public class GUI implements UserInterface, Runnable {
 		mainFrame.setVisible(true);
 	}
 	
+	private void setupStatusBar() {
+		statusPanel = new JPanel();
+		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		layout.putConstraint(SpringLayout.SOUTH, statusPanel, 0, SpringLayout.SOUTH, mainPanel);
+		//statusPanel.setBackground(Color.LIGHT_GRAY);
+		mainPanel.add(statusPanel);
+		statusPanel.setPreferredSize(new Dimension(Constants.DEFAULT_WINDOW_WIDTH, 16));
+		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+		statusLabel = new JLabel("");
+		statusLabel.setHorizontalAlignment(JLabel.LEFT);
+		statusPanel.add(statusLabel);
+	}
+
 	private void setupScenarioPanel(int n) {
 		JPanel newPanel = new JPanel();
 		scenarioLayout = new BoxLayout(newPanel, BoxLayout.X_AXIS);
@@ -294,13 +299,14 @@ public class GUI implements UserInterface, Runnable {
 		for(SceneData scene : scenario.getScenes()) {
 			showScene(scene);
 		}
+		statusLabel.setText("Scenario "+scenario.getTitle()+" opened.");
 		mainPanel.revalidate();
 		mainPanel.repaint();
 	}
 	
 	private void showScene(SceneData scene) {
 		JLabel sceneLabel = new JLabel("scene " + scene.getSeqNumber(), 
-				new ImageIcon("res/images/scene.png", "scene"), JLabel.CENTER);
+				new ImageIcon(scene.getObjectImagePath(), "scene"), JLabel.CENTER);
 		sceneLabels.add(sceneLabel);
 		sceneLabel.setVerticalTextPosition(JLabel.BOTTOM);
 		sceneLabel.setHorizontalTextPosition(JLabel.CENTER);
@@ -342,6 +348,7 @@ public class GUI implements UserInterface, Runnable {
 		mainPanel.remove(timeSlider);
 		displayedSceneNumber = 0;
 		setupScenarioPanel(0);
+		statusLabel.setText("Scenario closed.");
 		mainPanel.repaint();
 	}
 
@@ -374,7 +381,7 @@ public class GUI implements UserInterface, Runnable {
 	@Override
 	public void showTimeSlider(ArrayList<Integer> times) {
 		timeSlider = new TimeSlider(times);
-		layout.putConstraint(SpringLayout.SOUTH, timeSlider, 0, SpringLayout.SOUTH, mainPanel);
+		layout.putConstraint(SpringLayout.SOUTH, timeSlider, 0, SpringLayout.NORTH, statusPanel);
 		mainPanel.add(timeSlider);
 		mainPanel.updateUI();
 	}
@@ -390,6 +397,12 @@ public class GUI implements UserInterface, Runnable {
 
 	public void setUserInt(int userInt) {
 		this.userInt = userInt;
+	}
+
+	@Override
+	public void setStatusText(String text) {
+		statusLabel.setText(text);
+		statusPanel.updateUI();
 	}
 
 	/*public static void main(String[] args) {

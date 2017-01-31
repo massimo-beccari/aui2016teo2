@@ -97,6 +97,7 @@ public class ScenarioManager {
 		isPlaying = true;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PLAYED);
+		app.getUI().setStatusText("Playing...");
 		if(playManager.getPosition() < 1000)
 			storyController.play();
 		else
@@ -110,6 +111,7 @@ public class ScenarioManager {
 		isPlaying = false;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PAUSED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PAUSED);
+		app.getUI().setStatusText("Paused.");
 		storyController.pause();
 	}
 		
@@ -120,6 +122,7 @@ public class ScenarioManager {
 		isPlaying = false;
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
+		app.getUI().setStatusText("Stopped.");
 		storyController.stop();
 	}
 	

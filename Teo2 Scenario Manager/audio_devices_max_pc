@@ -1,0 +1,9 @@
+0 + AudioOutput[name=adummy,description=Dummy audio output,devices=[]]
+1 + AudioOutput[name=afile,description=File audio output,devices=[]]
+2 + AudioOutput[name=amem,description=Audio memory output,devices=[]]
+3 + AudioOutput[name=directsound,description=DirectX audio output,devices=[]]
+4 + AudioOutput[name=mmdevice,description=Windows Multimedia Device output,devices=[]]
+5 + AudioOutput[name=waveout,description=WaveOut audio output,devices=[AudioDevice[deviceId=wavemapper,longName=Microsoft Soundmapper], AudioDevice[deviceId=Speakers (Bluetooth Audio Devic ($1,$64),longName=Speakers (Bluetooth Audio Devic ($1,$64)], AudioDevice[deviceId=Speakers (Realtek High Definiti ($1,$64),longName=Speakers (Realtek High Definiti ($1,$64)]]]
+   0 - wavemapper
+   1 - Speakers (Bluetooth Audio Devic ($1,$64)
+   2 - Speakers (Realtek High Definiti ($1,$64)

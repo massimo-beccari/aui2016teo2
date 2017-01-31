@@ -33,4 +33,6 @@ public interface UserInterface {
 	public void showTimeSlider(ArrayList<Integer> times);
 	
 	public void updateTimeSlider(int time, int sceneNumber);
+	
+	public void setStatusText(String text);
 }

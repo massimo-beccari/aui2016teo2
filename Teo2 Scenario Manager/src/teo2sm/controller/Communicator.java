@@ -39,42 +39,6 @@ public class Communicator implements CommInterface {
         is.close();
         streamConnection.close();
     }
-	
-	@Override
-	public ActionTime playVideo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ActionTime pauseVideo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ActionTime playStory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ActionTime pauseStory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ActionTime playMusic() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ActionTime pauseMusic() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public int waitChildInteraction() {
@@ -99,8 +63,8 @@ public class Communicator implements CommInterface {
 	}
 
 	@Override
-	public String waitRfidObject(String tag) {
-		// We need to know the current scene
+	public String waitRfidObject() {
+		/*// We need to know the current scene
 		byte[] buffer = new byte[256]; 
 		openConnection();
 		// sending expected RFID tag name
@@ -108,7 +72,8 @@ public class Communicator implements CommInterface {
 		// reading result
 		int length = is.read(buffer);
 		closeConnection();
-		return new String(buffer, 1, length);
+		return new String(buffer, 1, length);*/
+		return null;
 	}
 
 	@Override

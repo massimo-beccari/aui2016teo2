@@ -1,23 +1,6 @@
 package teo2sm.controller;
 
-import teo2sm.model.ActionTime;
-
 public interface CommInterface {
-	/*blocco di funzioni per proiettore, casse, altoparlante bluetooth*/
-	/*le funzioni ritornano un oggetto di tipo Time con il tempo in cui la riproduzione è o è stata interrotta
-	 * non so se sia una buona idea, poi vedremo*/
-	public ActionTime playVideo();
-	
-	public ActionTime pauseVideo();
-	
-	public ActionTime playStory();
-	
-	public ActionTime pauseStory();
-	
-	public ActionTime playMusic();
-	
-	public ActionTime pauseMusic();
-	
 	/*blocco funzioni comandi bluetooth*/
 	/**
 	 * Teo stays idle till the child interact with him
@@ -30,7 +13,7 @@ public interface CommInterface {
 	 * @param tag the RFID tag of the wanted object
 	 * @return the RFID tag of the read object or null if a timeout has expired
 	 */
-	public String waitRfidObject(String tag);
+	public String waitRfidObject();
 	
 	/**
 	 * Set Teo mood (face led matrix and led strips)

@@ -79,7 +79,7 @@ public class MenuHandler implements ActionListener {
 			case Constants.SCENARIO_PAUSED:
 				menuItems.get(4).setEnabled(true);
 				menuItems.get(5).setEnabled(false);
-				menuItems.get(6).setEnabled(true);
+				menuItems.get(6).setEnabled(false);
 	        	break;
 	        
 	        default:
