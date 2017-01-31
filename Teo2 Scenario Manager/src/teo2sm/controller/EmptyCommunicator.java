@@ -15,14 +15,26 @@ public class EmptyCommunicator implements CommInterface {
 	}
 
 	@Override
-	public void setTeoMood(int code) {
+	public void openConnection() {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
-	public void sendTeoMovement(int code) {
+	public void closeConnection() {
 		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void setTeoMood(String code) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendTeoMovement(String code) {
+		// TODO Auto-generated method stub
+		
 	}
 }

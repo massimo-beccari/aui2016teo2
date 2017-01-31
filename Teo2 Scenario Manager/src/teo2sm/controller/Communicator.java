@@ -1,18 +1,11 @@
 package teo2sm.controller;
 
-import teo2sm.model.ActionTime;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.bluetooth.DeviceClass;
-import javax.bluetooth.DiscoveryAgent;
-import javax.bluetooth.DiscoveryListener;
-import javax.bluetooth.LocalDevice;
-import javax.bluetooth.RemoteDevice;
-import javax.bluetooth.ServiceRecord;
-import javax.bluetooth.UUID;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
@@ -21,23 +14,35 @@ public class Communicator implements CommInterface {
 
     private String hc05Url = "btspp://" + CommConstants.BLUETOOTH_ADDRESS + 
     		":1;authenticate=false;encrypt=false;master=false";
+    private StreamConnection streamConnection;
+    private OutputStream os;
+    private InputStream is;
+    private BufferedReader br;
     
-    StreamConnection streamConnection;
-    OutputStream os;
-    InputStream is;
+    public Communicator() {
+    	
+    }
     
-    private void openConnection() throws Exception {
-    	streamConnection = (StreamConnection) Connector.open(hc05Url);
-        os = streamConnection.openOutputStream();
-        is = streamConnection.openInputStream();
-
+    public void openConnection() {
+    	try {
+			streamConnection = (StreamConnection) Connector.open(hc05Url);
+			os = streamConnection.openOutputStream();
+	        is = streamConnection.openInputStream();
+	        br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         //os.write("prova1\r".getBytes()); //just send '1' to the device
     }
     
-    private void closeConnection() throws Exception {
-    	os.close();
-        is.close();
-        streamConnection.close();
+    public void closeConnection() {
+    	try {
+	    	os.close();
+	        is.close();
+	        streamConnection.close();
+    	} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
 	@Override
@@ -64,21 +69,20 @@ public class Communicator implements CommInterface {
 
 	@Override
 	public String waitRfidObject() {
-		/*// We need to know the current scene
-		byte[] buffer = new byte[256]; 
-		openConnection();
-		// sending expected RFID tag name
-		os.write((ScenarioManager.currentScene+CommConstants.COMMAND_EOL).getBytes());
-		// reading result
-		int length = is.read(buffer);
-		closeConnection();
-		return new String(buffer, 1, length);*/
+		try {
+			os.write((CommConstants.COMM_RFID+CommConstants.COMMAND_EOL).getBytes());
+			String tag = br.readLine();
+			closeConnection();
+			return tag;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
-	public void setTeoMood(int code) {
-		try {
+	public void setTeoMood(String code) {
+		/*try {
 			openConnection();
 			switch (code) {
 			case CommConstants.COMM_MOOD_NEUTRAL:
@@ -103,12 +107,12 @@ public class Communicator implements CommInterface {
 			closeConnection();
 		} catch (Exception e) {
 			//TODO
-		}
+		}*/
 	}
 
 	@Override
-	public void sendTeoMovement(int code) {
-		try {
+	public void sendTeoMovement(String code) {
+		/*try {
 			openConnection();
 			switch (code) {
 			case CommConstants.MOV_OFF:
@@ -130,7 +134,13 @@ public class Communicator implements CommInterface {
 			closeConnection();
 		} catch (Exception e) {
 			//TODO
-		}
+		}*/
 	}
-
+	
+	public static void main(String[] args) {
+		Communicator comm = new Communicator();
+		comm.openConnection();
+		System.out.println(comm.waitRfidObject());
+		comm.closeConnection();
+	}
 }

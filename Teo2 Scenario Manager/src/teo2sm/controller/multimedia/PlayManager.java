@@ -139,7 +139,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		position = (basePosition*1000) + ((int) (((long) prop.get("mp3.position.microseconds")) / 1000));
 		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
 		if((currentAction != null) && ((int)(currentAction.getActionTime().toLong()) > position)) {
-			app.getCommunicator().setTeoMood(/*TODO set mood code*/0);
+			app.getCommunicator().setTeoMood(currentAction.getActionID());
 			if(actionIterator.hasNext())
 				currentAction = actionIterator.next();
 			else
