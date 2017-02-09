@@ -48,7 +48,8 @@ public class VideoPlayer extends Thread {
         outputs = factory.getAudioOutputs();
         pcOut = outputs.get(5);
         pcSpeakers = pcOut.getDevices().get(2);
-        mediaPlayer.setAudioOutputDevice(pcOut.getName(), pcSpeakers.getDeviceId());
+        mediaPlayer.setAudioOutput(pcOut.getName());
+        mediaPlayer.setAudioOutputDevice(null, pcSpeakers.getDeviceId());
         videoSurface = factory.newVideoSurface(canvas);
         mediaPlayer.setVideoSurface(videoSurface);
         contentPane = new JPanel();

@@ -98,7 +98,7 @@ public class ScenarioManager {
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setStatusText("Playing...");
-		if(playManager.getPosition() < 1000)
+		if(playManager.getPosition() < 100)
 			storyController.play();
 		else
 			storyController.resume();
