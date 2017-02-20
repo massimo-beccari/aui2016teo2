@@ -6,7 +6,7 @@ import teo2sm.Constants;
 
 public class SceneData {
 	private int seqNumber;
-	private String backgroundMusicPath;
+	private String reinforcementContentPath;
 	private String storyPath;
 	private String projectedContentPath;
 	private String objectImagePath;
@@ -16,19 +16,19 @@ public class SceneData {
 	public SceneData() {
 		seqNumber = 0;
 		storyPath = Constants.SCENE_DEFAULT_PATH_NAME;
-		backgroundMusicPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		reinforcementContentPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		projectedContentPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		objectImagePath = Constants.SCENE_DEFAULT_PATH_NAME;
 		rfidObjectTag = Constants.SCENE_DEFAULT_PATH_NAME;
 		actions = new ArrayList<TeoAction>();
 	}
 
-	public String getBackgroundMusicPath() {
-		return backgroundMusicPath;
+	public String getReinforcementContentPath() {
+		return reinforcementContentPath;
 	}
 
-	public void setBackgroundMusicPath(String backgroundMusicPath) {
-		this.backgroundMusicPath = backgroundMusicPath;
+	public void setReinforcementContentPath(String reinforcementContentPath) {
+		this.reinforcementContentPath = reinforcementContentPath;
 	}
 
 	public String getStoryPath() {

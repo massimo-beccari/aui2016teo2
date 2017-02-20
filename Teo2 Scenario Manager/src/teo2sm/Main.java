@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import teo2sm.controller.AppCore;
-import teo2sm.controller.EmptyCommunicator;
+import teo2sm.controller.Communicator;
 import teo2sm.view.GUI;
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
@@ -18,7 +18,7 @@ public class Main {
         
 		ExecutorService e = Executors.newSingleThreadExecutor();
 		GUI gui = new GUI();
-		EmptyCommunicator comm = new EmptyCommunicator();
+		Communicator comm = new Communicator();
 		AppRefs app = new AppRefs(gui, comm);
 		AppCore core = new AppCore(app);
 		e.execute(gui);

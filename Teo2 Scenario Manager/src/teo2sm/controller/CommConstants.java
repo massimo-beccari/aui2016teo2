@@ -18,7 +18,9 @@ public class CommConstants {
 	public static final String BLUETOOTH_ADDRESS = "98D331FD381F";
 	public static final String COMMAND_EOL = "\r";
 	//rfid
-	public static final String COMM_RFID = "waitRfidObject";
+	public static final String COMM_CMD_RFID = "waitRfidObject";
+	public static final String COMM_CMD_BUTTON = "waitButtonInteraction";
+	public static final String COMM_CMD_FSR = "waitFsrInteraction";
 	//movement
 	public static final int MOV_OFF = 40;
 	public static final int MOV_VIBRATE = 41;

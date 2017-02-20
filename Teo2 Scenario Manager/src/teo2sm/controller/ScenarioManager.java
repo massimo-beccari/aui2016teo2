@@ -98,6 +98,7 @@ public class ScenarioManager {
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setStatusText("Playing...");
+		app.getCommunicator().openConnection();
 		if(playManager.getPosition() < 100)
 			storyController.play();
 		else
@@ -124,6 +125,7 @@ public class ScenarioManager {
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
 		app.getUI().setStatusText("Stopped.");
 		storyController.stop();
+		app.getCommunicator().closeConnection();
 	}
 	
 	//manage scenario save

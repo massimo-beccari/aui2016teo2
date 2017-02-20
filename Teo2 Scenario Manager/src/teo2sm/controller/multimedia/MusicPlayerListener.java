@@ -27,9 +27,8 @@ public class MusicPlayerListener extends Thread implements BasicPlayerListener {
 
 	private void init() {
 		try {
-			musicController.open(new File(currentScene.getBackgroundMusicPath()));
+			musicController.open(new File(currentScene.getReinforcementContentPath()));
 		} catch (BasicPlayerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -40,7 +39,6 @@ public class MusicPlayerListener extends Thread implements BasicPlayerListener {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

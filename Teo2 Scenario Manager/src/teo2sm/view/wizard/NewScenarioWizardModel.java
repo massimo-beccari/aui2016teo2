@@ -154,10 +154,13 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 		SceneData scene = new SceneData();
 		scene.setSeqNumber(n);
 		scene.setStoryPath(page.getStoryPath());
-		scene.setBackgroundMusicPath(page.getMusicPath());
+		scene.setReinforcementContentPath(page.getReinforcementPath());
 		scene.setProjectedContentPath(page.getVideoPath());
 		scene.setObjectImagePath(page.getImagePath());
-		scene.setRfidObjectTag(page.getRfidTag());
+		if(!page.getRfidTag().equals(""))
+			scene.setRfidObjectTag(page.getRfidTag());
+		else
+			scene.setRfidObjectTag(Constants.SCENE_RFID_EMPTY);
 		try {
 			setActions(page, scene);
 		} catch (Exception e) {
@@ -169,28 +172,30 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 	
 	private void setActions(NewScenarioWizardPage2 page, SceneData scene) throws Exception {
 		String actionsString = page.getActions();
-		Scanner sc1 = new Scanner(actionsString);
-		sc1.useDelimiter(" ");
-		String actionString = sc1.next();
-		boolean ended = false;
-		while(!ended) {
-			Scanner sc2 = new Scanner(actionString);
-			sc2.useDelimiter("_");
-			String s = sc2.next();
-			ActionTime actionTime = new ActionTime(s);
-			sc2.skip("_");
-			sc2.useDelimiter(" ");
-			s = sc2.next();
-			TeoAction action = new TeoAction(s, actionTime);
-			sc2.close();
-			scene.getActions().add(action);
-			try {
-				actionString = sc1.next();
-			} catch(NoSuchElementException e) {
-				ended = true;
+		if(!actionsString.equals("")) {
+			Scanner sc1 = new Scanner(actionsString);
+			sc1.useDelimiter(" ");
+			String actionString = sc1.next();
+			boolean ended = false;
+			while(!ended) {
+				Scanner sc2 = new Scanner(actionString);
+				sc2.useDelimiter("_");
+				String s = sc2.next();
+				ActionTime actionTime = new ActionTime(s);
+				sc2.skip("_");
+				sc2.useDelimiter(" ");
+				s = sc2.next();
+				TeoAction action = new TeoAction(s, actionTime);
+				sc2.close();
+				scene.getActions().add(action);
+				try {
+					actionString = sc1.next();
+				} catch(NoSuchElementException e) {
+					ended = true;
+				}
 			}
+			sc1.close();
 		}
-		sc1.close();
 	}
 	
 	/*private void reloadPage(int n) {
@@ -203,7 +208,7 @@ public class NewScenarioWizardModel implements WizardModel<ScenarioData> {
 			SceneData oldScene = rawResult.get(n);
 			NewScenarioWizardPage2 page = (NewScenarioWizardPage2) pages.get(n);
 			page.setStoryText(oldScene.getStoryPath());
-			page.setMusicText(oldScene.getBackgroundMusicPath());
+			page.setReinforcementText(oldScene.getReinforcementContentPath());
 			page.setVideoText(oldScene.getProjectedContentPath());
 			page.setRfidTag(oldScene.getRfidObjectTag());
 			page.updateUI();

@@ -12,6 +12,7 @@ import javazoom.jlgui.basicplayer.BasicPlayerException;
 import javazoom.jlgui.basicplayer.BasicPlayerListener;
 import teo2sm.AppRefs;
 import teo2sm.Constants;
+import teo2sm.controller.CommConstants;
 import teo2sm.controller.ScenarioManager;
 import teo2sm.model.ScenarioData;
 import teo2sm.model.SceneData;
@@ -31,6 +32,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	private int duration;
 	private int basePosition;
 	private int position;
+	private boolean flag;
 	
 	public PlayManager(AppRefs app, ScenarioManager sm, ScenarioData scenario, BasicController storyController) {
 		this.app = app;
@@ -56,6 +58,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		setDuration();
 		position = 0;
 		basePosition = 0;
+		flag = false;
 	}
 
 	private void loadMp3() {
@@ -138,6 +141,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		//position in milliseconds
 		position = (basePosition*1000) + ((int) (((long) prop.get("mp3.position.microseconds")) / 1000));
 		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
+		//update Teo mood
 		if((currentAction != null) && ((int)(currentAction.getActionTime().toLong()) > position)) {
 			app.getCommunicator().setTeoMood(currentAction.getActionID());
 			if(actionIterator.hasNext())
@@ -159,57 +163,99 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		} else if(e.getCode() == BasicPlayerEvent.RESUMED) {
 			videoPlayer.resumeVideo();
 		} else if(e.getCode() == BasicPlayerEvent.STOPPED) {
-			videoPlayer.stopVideo();
 			reinitialize();
 		} else if(e.getCode() == BasicPlayerEvent.EOM) {
+			flag = true;
+		}
+	}
+	
+	private void reinitialize() {
+		if(!flag) {
+			videoPlayer.stopVideo();
+			app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
+			app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
+			scenarioManager.setPlaying(false);
+			basePosition = 0;
+			position = 0;
+			sceneIterator = scenario.getScenes().iterator();
+			currentScene = sceneIterator.next();
+			app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
+			loadMp3();
+			videoPlayer.setPaths(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
+		} else {
+			flag = false;
 			if(sceneIterator.hasNext()) {
+				System.out.println("Scene "+currentScene.getSeqNumber());
 				basePosition = basePosition + calculateSceneDuration(currentScene);
+				//in the first scene Teo waits for button interaction
+				if(currentScene.getSeqNumber() == 1)
+					manageButtonInteraction();
+				//in the other scenes, choose if wait for tag o go on directly with next scene
+				else if(!currentScene.getRfidObjectTag().equals(Constants.SCENE_RFID_EMPTY))
+					manageObjectInteraction();
+				if(videoPlayer.isPlaying())
+					videoPlayer.stopVideo();
+				//set next scene
 				currentScene = sceneIterator.next();
 				actionIterator = currentScene.getActions().iterator();
 				if(actionIterator.hasNext())
 					currentAction = actionIterator.next();
 				else
 					currentAction = null;
-				manageObjectInteraction();
 				videoPlayer.setPaths(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
 				loadMp3();
+				//play next scene
 				try {
 					storyController.play();
 				} catch (BasicPlayerException e1) {
 					e1.printStackTrace();
 				}
 			} else {
+				manageHughInteraction();
 				//re initialization
 				reinitialize();
 			}
 		}
 	}
 	
-	private void reinitialize() {
-		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
-		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
-		scenarioManager.setPlaying(false);
-		basePosition = 0;
-		position = 0;
-		sceneIterator = scenario.getScenes().iterator();
-		currentScene = sceneIterator.next();
-		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
-		loadMp3();
-	}
-	
 	private void manageObjectInteraction() {
+		System.out.println("RFID - Sending waitRfidObject command...");
 		String objectTag = app.getCommunicator().waitRfidObject();
 		videoPlayer.stopVideo();
 		while(!objectTag.equals(currentScene.getRfidObjectTag())) {
-			videoPlayer.switchToImage();
+			if(!videoPlayer.isPlaying()) {
+				videoPlayer.setPaths(currentScene.getReinforcementContentPath(), currentScene.getObjectImagePath());
+				videoPlayer.playVideo();
+			}
 			playAudioReinforcement();
 			objectTag = app.getCommunicator().waitRfidObject();
 		}
-		videoPlayer.switchToVideo();
+		System.out.println("RFID - Received RFID tag! - "+objectTag);
+	}
+	
+	private void manageButtonInteraction() {
+		/*int interaction;
+		do {
+			interaction = app.getCommunicator().waitButtonInteraction();
+		} while (interaction != CommConstants.COMM_BUTTON_GREY);*/
+	}
+	
+	private void manageHughInteraction() {
+		/*int interaction;
+		do {
+			interaction = app.getCommunicator().waitFsrInteraction();
+		} while (interaction != CommConstants.COMM_FSR_HUG);*/
 	}
 	
 	private void playAudioReinforcement() {
-		//TODO
+		/*BasicPlayer reinforcementPlayer = new BasicPlayer();
+		BasicController reinforcementController = (BasicController) reinforcementPlayer;
+		try {
+			reinforcementController.open(new File("res/reinforcement.mp3"));
+			reinforcementController.play();
+		} catch (BasicPlayerException e) {
+			e.printStackTrace();
+		}*/
 	}
 
 	public void setOpened(boolean opened) {

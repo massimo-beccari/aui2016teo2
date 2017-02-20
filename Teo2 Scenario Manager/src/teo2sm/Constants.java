@@ -27,9 +27,10 @@ public class Constants {
 	//scene file names
 	public static final String SCENE_DEFAULT_PATH_NAME = "default";
 	public static final String SCENE_STORY = "story";
-	public static final String SCENE_BACKGROUND_MUSIC = "music";
+	public static final String SCENE_REINFORCEMENT_CONTENT = "reinforcement";
 	public static final String SCENE_PROJECTED_CONTENT = "video";
 	public static final String SCENE_OBJECT_IMAGE = "image";
+	public static final String SCENE_RFID_EMPTY = "no_object";
 	//wizard page ids
 	public static final String WIZARD_PAGE_FIRST = "wizard_1";
 	public static final String WIZARD_PAGE_SCENE = "wizard_2";
@@ -38,7 +39,7 @@ public class Constants {
 	public static final int MAX_SCENE_NUMBER = 16;
 	public static final String FILE_EXTENSION_SCENARIO = ".teo2s";
 	public static final String FILE_EXTENSION_STORY = "mp3";
-	public static final String FILE_EXTENSION_BACKGROUND_MUSIC = "mp3";
+	public static final String FILE_EXTENSION_REINFORCEMENT_CONTENT = "mp4";
 	public static final String FILE_EXTENSION_PROJECTED_CONTENT = "mp4";
 	public static final String FILE_EXTENSION_OBJECT_IMAGE = "png";
 	public static final String WINDOW_TITLE = "Teo2 Scenario Manager";

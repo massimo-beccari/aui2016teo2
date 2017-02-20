@@ -17,23 +17,23 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	private static final long serialVersionUID = 1L;
 	private BoxLayout layout;
 	private JLabel storyLabel;
-	private JLabel musicLabel;
+	private JLabel reinforcementLabel;
 	private JLabel videoLabel;
 	private JLabel imageLabel;
 	private JLabel tagLabel;
 	private JLabel actionsLabel;
 	private JTextField storyText;
-	private JTextField musicText;
+	private JTextField reinforcementText;
 	private JTextField videoText;
 	private JTextField imageText;
 	private JTextField tagText;
 	private JTextField actionsText;
 	private JButton storyButton;
-	private JButton musicButton;
+	private JButton reinforcementButton;
 	private JButton videoButton;
 	private JButton imageButton;
 	private String storyPath;
-	private String musicPath;
+	private String reinforcementPath;
 	private String videoPath;
 	private String imagePath;
 	private String rfidTag;
@@ -43,11 +43,11 @@ public class NewScenarioWizardPage2 extends WizardPage {
 	public NewScenarioWizardPage2() {
 		error = false;
 		storyPath = Constants.SCENE_DEFAULT_PATH_NAME;
-		musicPath = Constants.SCENE_DEFAULT_PATH_NAME;
+		reinforcementPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		videoPath = Constants.SCENE_DEFAULT_PATH_NAME;
 		imagePath = Constants.SCENE_DEFAULT_PATH_NAME;
-		rfidTag = Constants.SCENE_DEFAULT_PATH_NAME;
-		actions = Constants.SCENE_DEFAULT_PATH_NAME;
+		rfidTag = "";
+		actions = "";
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		} catch(NumberFormatException e) {
 			error = true;
 		}
-		if(imagePath == null || storyPath == null || musicPath == null || videoPath == null)
+		if(imagePath == null || storyPath == null || reinforcementPath == null || videoPath == null)
 			error = true;
 	}
 	
@@ -83,7 +83,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
             return new String(file.getAbsolutePath());
         }
         
-		return null;
+		return Constants.SCENE_DEFAULT_PATH_NAME;
 	}
 
 	@Override
@@ -91,28 +91,28 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		this.setLayout(layout);
 		storyLabel = new JLabel("Story audio file:");
-		musicLabel = new JLabel("Background music audio file:");
+		reinforcementLabel = new JLabel("Reinforcement video file:");
 		videoLabel = new JLabel("Projected content video file:");
 		imageLabel = new JLabel("Object image file:");
 		tagLabel = new JLabel("RFID tag:");
 		actionsLabel = new JLabel("Teo actions:");
 		storyText = new JTextField();
-		musicText = new JTextField();
+		reinforcementText = new JTextField();
 		videoText = new JTextField();
 		imageText = new JTextField();
 		tagText = new JTextField();
 		actionsText = new JTextField();
 		storyButton = new JButton("Choose file");
-		musicButton = new JButton("Choose file");
+		reinforcementButton = new JButton("Choose file");
 		videoButton = new JButton("Choose file");
 		imageButton = new JButton("Choose file");
 		storyText.setEnabled(false);
-		musicText.setEnabled(false);
+		reinforcementText.setEnabled(false);
 		videoText.setEnabled(false);
 		imageText.setEnabled(false);
-		NewScenarioWizardPage2Handler handler = new NewScenarioWizardPage2Handler(this, storyButton, musicButton, videoButton, imageButton);
+		NewScenarioWizardPage2Handler handler = new NewScenarioWizardPage2Handler(this, storyButton, reinforcementButton, videoButton, imageButton);
 		storyButton.addActionListener(handler);
-		musicButton.addActionListener(handler);
+		reinforcementButton.addActionListener(handler);
 		videoButton.addActionListener(handler);
 		imageButton.addActionListener(handler);
 		
@@ -121,9 +121,9 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		this.add(storyText);
 		this.add(storyButton);
 		this.add(Box.createRigidArea(new Dimension(0, 10)));
-		this.add(musicLabel);
-		this.add(musicText);
-		this.add(musicButton);
+		this.add(reinforcementLabel);
+		this.add(reinforcementText);
+		this.add(reinforcementButton);
 		this.add(Box.createRigidArea(new Dimension(0, 10)));
 		this.add(videoLabel);
 		this.add(videoText);
@@ -151,9 +151,9 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		this.storyText.setText(storyPath);
 	}
 
-	protected void setMusicText(String musicPath) {
-		this.musicPath = musicPath;
-		this.musicText.setText(musicPath);
+	protected void setReinforcementText(String reinforcementPath) {
+		this.reinforcementPath = reinforcementPath;
+		this.reinforcementText.setText(reinforcementPath);
 	}
 
 	protected void setVideoText(String videoPath) {
@@ -170,8 +170,8 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		return storyPath;
 	}
 
-	public String getMusicPath() {
-		return musicPath;
+	public String getReinforcementPath() {
+		return reinforcementPath;
 	}
 
 	public String getVideoPath() {

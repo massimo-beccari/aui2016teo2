@@ -44,33 +44,47 @@ public class Communicator implements CommInterface {
 			e.printStackTrace();
 		}
     }
+    
+    @Override
+    public int waitFsrInteraction() {
+    	try {
+			os.write((CommConstants.COMM_CMD_FSR+CommConstants.COMMAND_EOL).getBytes());
+			String fsr = br.readLine();
+			closeConnection();
+			if(fsr.equals("hug"))
+				return 20;
+			else if(fsr.equals("punch"))
+				return 21;
+			else if(fsr.equals("caress"))
+				return 22;
+			else
+				return -1;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return -1;
+    }
 
 	@Override
-	public int waitChildInteraction() {
+	public int waitButtonInteraction() {
 		try {
-			openConnection();
-			int interaction = is.read();
+			os.write((CommConstants.COMM_CMD_BUTTON+CommConstants.COMMAND_EOL).getBytes());
+			String button = br.readLine();
 			closeConnection();
-			switch (interaction) {
-			case CommConstants.COMM_FSR_HUG:
-				return CommConstants.COMM_FSR_HUG;
-			case CommConstants.COMM_FSR_PUNCH:
-				return CommConstants.COMM_FSR_PUNCH;
-			case CommConstants.COMM_FSR_CARESS:
-				return CommConstants.COMM_FSR_CARESS;
-			default: 
-				return 0;
-			}
-		} catch (Exception e) {
-			//TODO
+			if(button.equals("button1"))
+				return 10;
+			else
+				return -1;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return 0;
+		return -1;
 	}
 
 	@Override
 	public String waitRfidObject() {
 		try {
-			os.write((CommConstants.COMM_RFID+CommConstants.COMMAND_EOL).getBytes());
+			os.write((CommConstants.COMM_CMD_RFID+CommConstants.COMMAND_EOL).getBytes());
 			String tag = br.readLine();
 			closeConnection();
 			return tag;

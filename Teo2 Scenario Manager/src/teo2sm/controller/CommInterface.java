@@ -1,19 +1,19 @@
 package teo2sm.controller;
 
-import java.util.HashMap;
-
 public interface CommInterface {
 	
 	public void openConnection();
 	
 	public void closeConnection();
 	
+	public int waitFsrInteraction();
+	
 	/*blocco funzioni comandi bluetooth*/
 	/**
 	 * Teo stays idle till the child interact with him
 	 * @return an int representing the communication constant of the type of interaction received
 	 */
-	public int waitChildInteraction();
+	public int waitButtonInteraction();
 	
 	/**
 	 * Send Teo the RFID tag of the object we want the child to bring to him

@@ -111,28 +111,30 @@ public class ScenarioFileManager {
 	}
 	
 	private void setActions(String actionsString, SceneData scene) throws Exception {
-		Scanner sc1 = new Scanner(actionsString);
-		sc1.useDelimiter(" ");
-		String actionString = sc1.next();
-		boolean ended = false;
-		while(!ended) {
-			Scanner sc2 = new Scanner(actionString);
-			sc2.useDelimiter("_");
-			String s = sc2.next();
-			ActionTime actionTime = new ActionTime(s);
-			sc2.skip("_");
-			sc2.useDelimiter(" ");
-			s = sc2.next();
-			TeoAction action = new TeoAction(s, actionTime);
-			sc2.close();
-			scene.getActions().add(action);
-			try {
-				actionString = sc1.next();
-			} catch(NoSuchElementException e) {
-				ended = true;
+		if(!actionsString.equals("")) {
+			Scanner sc1 = new Scanner(actionsString);
+			sc1.useDelimiter(" ");
+			String actionString = sc1.next();
+			boolean ended = false;
+			while(!ended) {
+				Scanner sc2 = new Scanner(actionString);
+				sc2.useDelimiter("_");
+				String s = sc2.next();
+				ActionTime actionTime = new ActionTime(s);
+				sc2.skip("_");
+				sc2.useDelimiter(" ");
+				s = sc2.next();
+				TeoAction action = new TeoAction(s, actionTime);
+				sc2.close();
+				scene.getActions().add(action);
+				try {
+					actionString = sc1.next();
+				} catch(NoSuchElementException e) {
+					ended = true;
+				}
 			}
+			sc1.close();
 		}
-		sc1.close();
 	}
 	
 	//WARNING: call this method only in WRITE mode
@@ -213,8 +215,9 @@ public class ScenarioFileManager {
 				Files.copy(Paths.get(scenario.getScenes().get(i).getStoryPath()), 
 						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(Paths.get(scenario.getScenes().get(i).getBackgroundMusicPath()), 
-						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC), 
+				if(!scenario.getScenes().get(i).getReinforcementContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+					Files.copy(Paths.get(scenario.getScenes().get(i).getReinforcementContentPath()), 
+						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
 				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
 						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
@@ -231,8 +234,8 @@ public class ScenarioFileManager {
 				Files.copy(Paths.get(scenario.getScenes().get(i).getStoryPath()), 
 						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(Paths.get(scenario.getScenes().get(i).getBackgroundMusicPath()), 
-						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC), 
+				Files.copy(Paths.get(scenario.getScenes().get(i).getReinforcementContentPath()), 
+						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
 				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
 						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
@@ -252,12 +255,12 @@ public class ScenarioFileManager {
 	private void setupSceneFiles(SceneData scene, int i) {
 		if(i<10) {
 			scene.setStoryPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
-			scene.setBackgroundMusicPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC);
+			scene.setReinforcementContentPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT);
 			scene.setProjectedContentPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
 			scene.setObjectImagePath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		} else {
 			scene.setStoryPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
-			scene.setBackgroundMusicPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_BACKGROUND_MUSIC+"."+Constants.FILE_EXTENSION_BACKGROUND_MUSIC);
+			scene.setReinforcementContentPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT);
 			scene.setProjectedContentPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
 			scene.setObjectImagePath(filePath+"_data/scene"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		}
@@ -276,13 +279,13 @@ public class ScenarioFileManager {
 		SceneData scene = sc.getScenes().get(0);
 		System.out.println(sc.getTitle());
 		System.out.println(scene.getStoryPath());
-		System.out.println(scene.getBackgroundMusicPath());
+		System.out.println(scene.getReinforcementContentPath());
 		System.out.println(scene.getProjectedContentPath());
 		System.out.println(scene.getRfidObjectTag());
 		scene = sc.getScenes().get(1);
 		System.out.println(sc.getTitle());
 		System.out.println(scene.getStoryPath());
-		System.out.println(scene.getBackgroundMusicPath());
+		System.out.println(scene.getReinforcementContentPath());
 		System.out.println(scene.getProjectedContentPath());
 		System.out.println(scene.getRfidObjectTag());
 		//test write
@@ -291,13 +294,13 @@ public class ScenarioFileManager {
 		sc2.setTitle("prova_titolo");
 		SceneData scene2 = new SceneData();
 		scene2.setStoryPath("C:\\percorso\\story");
-		scene2.setBackgroundMusicPath("C:\\percorso\\music");
+		scene2.setReinforcementContentPath("C:\\percorso\\music");
 		scene2.setProjectedContentPath("C:\\percorso\\multimedia");
 		scene2.setRfidObjectTag("123456");
 		sc2.getScenes().add(scene2);
 		scene2 = new SceneData();
 		scene2.setStoryPath("C:\\percorso\\story2");
-		scene2.setBackgroundMusicPath("C:\\percorso\\music2");
+		scene2.setReinforcementContentPath("C:\\percorso\\music2");
 		scene2.setProjectedContentPath("C:\\percorso\\multimedia2");
 		scene2.setRfidObjectTag("987654");
 		sc2.getScenes().add(scene2);

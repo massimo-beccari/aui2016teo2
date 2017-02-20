@@ -27,7 +27,7 @@ public class VideoPlayer extends Thread {
 	private final JPanel contentPane;
 	private final List<AudioOutput> outputs;
 	private final AudioOutput pcOut;
-	private final AudioDevice pcSpeakers;
+	//private final AudioDevice pcSpeakers;
 	private final Canvas canvas;
 	
 	private String videoPath;
@@ -47,9 +47,9 @@ public class VideoPlayer extends Thread {
         mediaPlayer = factory.newEmbeddedMediaPlayer();
         outputs = factory.getAudioOutputs();
         pcOut = outputs.get(5);
-        pcSpeakers = pcOut.getDevices().get(2);
+        /*pcSpeakers = pcOut.getDevices().get(2);
         mediaPlayer.setAudioOutput(pcOut.getName());
-        mediaPlayer.setAudioOutputDevice(null, pcSpeakers.getDeviceId());
+        mediaPlayer.setAudioOutputDevice(null, pcSpeakers.getDeviceId());*/
         videoSurface = factory.newVideoSurface(canvas);
         mediaPlayer.setVideoSurface(videoSurface);
         contentPane = new JPanel();
@@ -81,7 +81,7 @@ public class VideoPlayer extends Thread {
 	
 	public void playVideo() {
 		mediaPlayer.setRepeat(true);
-		mediaPlayer.setFullScreen(true);
+		//mediaPlayer.setFullScreen(true);
 		mediaPlayer.playMedia(videoPath);
 	}
 	
@@ -95,6 +95,10 @@ public class VideoPlayer extends Thread {
 	
 	public void stopVideo() {
 		mediaPlayer.stop();
+	}
+	
+	public boolean isPlaying() {
+		return mediaPlayer.isPlaying();
 	}
 	
 	public void closeWindow() {

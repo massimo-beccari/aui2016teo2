@@ -15,19 +15,19 @@ import teo2sm.Constants;
 
 public class TimeSlider extends JPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
-	private static final int INTER_SCENE_SPACING_TIME = 10;
+	private static final int INTER_SCENE_SPACING_TIME = 2;
 	private int maxTime;
 	private int minTime;
 	private JSlider slider;
 	
 	public TimeSlider(ArrayList<Integer> times) {
 		minTime = 0;
-		this.maxTime = times.get(0) + (times.size() - 2)*10;
+		this.maxTime = times.get(0) + (times.size() - 2)*INTER_SCENE_SPACING_TIME;
 		slider = new JSlider(JSlider.HORIZONTAL, minTime, this.maxTime, minTime);
 		slider.setPreferredSize(new Dimension(Constants.DEFAULT_WINDOW_WIDTH - 16, 64));
 		add(slider);
 		setLabels(times);
-		slider.setMajorTickSpacing(30);
+		slider.setMajorTickSpacing(10);
 		slider.setPaintTicks(true);
 	}
 
