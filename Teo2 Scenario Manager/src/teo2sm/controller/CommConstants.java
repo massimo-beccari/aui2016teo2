@@ -21,6 +21,11 @@ public class CommConstants {
 	public static final String COMM_CMD_RFID = "waitRfidObject";
 	public static final String COMM_CMD_BUTTON = "waitButtonInteraction";
 	public static final String COMM_CMD_FSR = "waitFsrInteraction";
+	public static final String COMM_CMD_MOOD_HAPPY = "setMoodHappy";
+	public static final String COMM_CMD_MOOD_SCARED = "setMoodScared";
+	public static final String COMM_CMD_MOOD_ANGRY = "setMoodAngry";
+	public static final String COMM_CMD_MOOD_SAD = "setMoodSad";
+	public static final String COMM_CMD_MOOD_NEUTRAL = "setMoodNeutral";
 	//movement
 	public static final int MOV_OFF = 40;
 	public static final int MOV_VIBRATE = 41;

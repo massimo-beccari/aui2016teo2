@@ -32,7 +32,8 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	private int duration;
 	private int basePosition;
 	private int position;
-	private boolean flag;
+	private boolean flagEndOfReproduction;
+	private boolean flagVideo;
 	
 	public PlayManager(AppRefs app, ScenarioManager sm, ScenarioData scenario, BasicController storyController) {
 		this.app = app;
@@ -52,13 +53,17 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		//video player
 		videoPlayer = new VideoPlayer(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
 		videoPlayer.start();
+		if(currentScene.getProjectedContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+			flagVideo = false;
+		else
+			flagVideo = true;
 		//
 		opened = true;
 	    loadMp3();
 		setDuration();
 		position = 0;
 		basePosition = 0;
-		flag = false;
+		flagEndOfReproduction = false;
 	}
 
 	private void loadMp3() {
@@ -157,21 +162,30 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	@Override
 	public void stateUpdated(BasicPlayerEvent e) {
 		if(e.getCode() == BasicPlayerEvent.PLAYING) {
-			videoPlayer.playVideo();
+			videoPlayer.setFullscreen(true);
+			if(flagVideo)
+				videoPlayer.playVideo();
 		} else if(e.getCode() == BasicPlayerEvent.PAUSED) {
-			videoPlayer.pauseVideo();
+			if(flagVideo)
+				videoPlayer.pauseVideo();
 		} else if(e.getCode() == BasicPlayerEvent.RESUMED) {
-			videoPlayer.resumeVideo();
+			if(flagVideo)
+				videoPlayer.resumeVideo();
 		} else if(e.getCode() == BasicPlayerEvent.STOPPED) {
 			reinitialize();
 		} else if(e.getCode() == BasicPlayerEvent.EOM) {
-			flag = true;
+			flagEndOfReproduction = true;
 		}
 	}
 	
 	private void reinitialize() {
-		if(!flag) {
-			videoPlayer.stopVideo();
+		//i pushed button stop
+		if(!flagEndOfReproduction) {
+			//video player settings
+			videoPlayer.setFullscreen(false);
+			videoPlayer.setRepeat(true);
+			if(flagVideo)
+				videoPlayer.stopVideo();
 			app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 			app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
 			scenarioManager.setPlaying(false);
@@ -182,8 +196,14 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
 			loadMp3();
 			videoPlayer.setPaths(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
+			//manage if there is a video file or not
+			if(currentScene.getProjectedContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+				flagVideo = false;
+			else
+				flagVideo = true;
 		} else {
-			flag = false;
+			//the reproduction of current scene ended
+			flagEndOfReproduction = false;
 			if(sceneIterator.hasNext()) {
 				System.out.println("Scene "+currentScene.getSeqNumber());
 				basePosition = basePosition + calculateSceneDuration(currentScene);
@@ -193,7 +213,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 				//in the other scenes, choose if wait for tag o go on directly with next scene
 				else if(!currentScene.getRfidObjectTag().equals(Constants.SCENE_RFID_EMPTY))
 					manageObjectInteraction();
-				if(videoPlayer.isPlaying())
+				if(flagVideo && videoPlayer.isPlaying())
 					videoPlayer.stopVideo();
 				//set next scene
 				currentScene = sceneIterator.next();
@@ -204,6 +224,11 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 					currentAction = null;
 				videoPlayer.setPaths(currentScene.getProjectedContentPath(), currentScene.getObjectImagePath());
 				loadMp3();
+				//manage if there is a video file or not
+				if(currentScene.getProjectedContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+					flagVideo = false;
+				else
+					flagVideo = true;
 				//play next scene
 				try {
 					storyController.play();
@@ -211,6 +236,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 					e1.printStackTrace();
 				}
 			} else {
+				videoPlayer.setRepeat(false);
 				manageHughInteraction();
 				//re initialization
 				reinitialize();
@@ -219,9 +245,10 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	}
 	
 	private void manageObjectInteraction() {
-		System.out.println("RFID - Sending waitRfidObject command...");
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: sending waitRfidObject command...");
 		String objectTag = app.getCommunicator().waitRfidObject();
-		videoPlayer.stopVideo();
+		if(flagVideo)
+			videoPlayer.stopVideo();
 		while(!objectTag.equals(currentScene.getRfidObjectTag())) {
 			if(!videoPlayer.isPlaying()) {
 				videoPlayer.setPaths(currentScene.getReinforcementContentPath(), currentScene.getObjectImagePath());
@@ -230,21 +257,25 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			playAudioReinforcement();
 			objectTag = app.getCommunicator().waitRfidObject();
 		}
-		System.out.println("RFID - Received RFID tag! - "+objectTag);
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: seceived RFID tag: "+objectTag);
 	}
 	
 	private void manageButtonInteraction() {
-		/*int interaction;
+		int interaction;
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - Button: sending waitButtonInteraction command...");
 		do {
 			interaction = app.getCommunicator().waitButtonInteraction();
-		} while (interaction != CommConstants.COMM_BUTTON_GREY);*/
+		} while (interaction != CommConstants.COMM_BUTTON_GREY);
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - Button: received button interaction: "+interaction);
 	}
 	
 	private void manageHughInteraction() {
-		/*int interaction;
+		int interaction;
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - FSR: sending waitFsrInteraction command...");
 		do {
 			interaction = app.getCommunicator().waitFsrInteraction();
-		} while (interaction != CommConstants.COMM_FSR_HUG);*/
+		} while (interaction != CommConstants.COMM_FSR_HUG);
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - FSR: received FSR interaction: "+interaction);
 	}
 	
 	private void playAudioReinforcement() {

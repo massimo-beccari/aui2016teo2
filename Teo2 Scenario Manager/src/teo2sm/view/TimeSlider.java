@@ -15,7 +15,7 @@ import teo2sm.Constants;
 
 public class TimeSlider extends JPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
-	private static final int INTER_SCENE_SPACING_TIME = 2;
+	private static final int INTER_SCENE_SPACING_TIME = 3;
 	private int maxTime;
 	private int minTime;
 	private JSlider slider;

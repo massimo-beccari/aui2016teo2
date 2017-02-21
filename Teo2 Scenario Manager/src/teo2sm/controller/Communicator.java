@@ -25,14 +25,14 @@ public class Communicator implements CommInterface {
     
     public void openConnection() {
     	try {
-			streamConnection = (StreamConnection) Connector.open(hc05Url);
+    		//BlueCoveImpl.setConfigProperty(BlueCoveConfigProperties.PROPERTY_CONNECT_TIMEOUT, String.valueOf(60 * 1000));
+			streamConnection = (StreamConnection) Connector.open(hc05Url/*, Connector.READ_WRITE, true*/);
 			os = streamConnection.openOutputStream();
 	        is = streamConnection.openInputStream();
 	        br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        //os.write("prova1\r".getBytes()); //just send '1' to the device
     }
     
     public void closeConnection() {
@@ -50,7 +50,6 @@ public class Communicator implements CommInterface {
     	try {
 			os.write((CommConstants.COMM_CMD_FSR+CommConstants.COMMAND_EOL).getBytes());
 			String fsr = br.readLine();
-			closeConnection();
 			if(fsr.equals("hug"))
 				return 20;
 			else if(fsr.equals("punch"))
@@ -61,8 +60,8 @@ public class Communicator implements CommInterface {
 				return -1;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return -1;
 		}
-		return -1;
     }
 
 	@Override
@@ -70,15 +69,14 @@ public class Communicator implements CommInterface {
 		try {
 			os.write((CommConstants.COMM_CMD_BUTTON+CommConstants.COMMAND_EOL).getBytes());
 			String button = br.readLine();
-			closeConnection();
 			if(button.equals("button1"))
 				return 10;
 			else
 				return -1;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return -1;
 		}
-		return -1;
 	}
 
 	@Override
@@ -86,42 +84,20 @@ public class Communicator implements CommInterface {
 		try {
 			os.write((CommConstants.COMM_CMD_RFID+CommConstants.COMMAND_EOL).getBytes());
 			String tag = br.readLine();
-			closeConnection();
 			return tag;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	@Override
 	public void setTeoMood(String code) {
-		/*try {
-			openConnection();
-			switch (code) {
-			case CommConstants.COMM_MOOD_NEUTRAL:
-				os.write(("moodNeutral"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			case CommConstants.COMM_MOOD_SAD:
-				os.write(("moodSad"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			case CommConstants.COMM_MOOD_ANGRY:
-				os.write(("moodAngry"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			case CommConstants.COMM_MOOD_SCARED:
-				os.write(("moodScared"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			case CommConstants.COMM_MOOD_HAPPY:
-				os.write(("moodHappy"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			default: 
-				os.write(("moodNeutral"+CommConstants.COMMAND_EOL).getBytes());
-				break;
-			}
-			closeConnection();
-		} catch (Exception e) {
-			//TODO
-		}*/
+		try {
+			os.write((code+CommConstants.COMMAND_EOL).getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -154,7 +130,9 @@ public class Communicator implements CommInterface {
 	public static void main(String[] args) {
 		Communicator comm = new Communicator();
 		comm.openConnection();
-		System.out.println(comm.waitRfidObject());
+		//System.out.println(comm.waitRfidObject());
+		//System.out.println(comm.waitFsrInteraction());
+		System.out.println(comm.waitButtonInteraction());
 		comm.closeConnection();
 	}
 }

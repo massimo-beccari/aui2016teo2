@@ -219,7 +219,8 @@ public class ScenarioFileManager {
 					Files.copy(Paths.get(scenario.getScenes().get(i).getReinforcementContentPath()), 
 						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
+				if(!scenario.getScenes().get(i).getProjectedContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+					Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
 						Paths.get(filePath+"_data/scene0"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
 				Files.copy(Paths.get(scenario.getScenes().get(i).getObjectImagePath()), 
@@ -234,10 +235,12 @@ public class ScenarioFileManager {
 				Files.copy(Paths.get(scenario.getScenes().get(i).getStoryPath()), 
 						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(Paths.get(scenario.getScenes().get(i).getReinforcementContentPath()), 
+				if(!scenario.getScenes().get(i).getReinforcementContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+					Files.copy(Paths.get(scenario.getScenes().get(i).getReinforcementContentPath()), 
 						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
+				if(!scenario.getScenes().get(i).getProjectedContentPath().equals(Constants.SCENE_DEFAULT_PATH_NAME))
+					Files.copy(Paths.get(scenario.getScenes().get(i).getProjectedContentPath()), 
 						Paths.get(filePath+"_data/scene"+Integer.toString(i+1)+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT), 
 						(CopyOption) StandardCopyOption.REPLACE_EXISTING);
 				Files.copy(Paths.get(scenario.getScenes().get(i).getObjectImagePath()), 
@@ -255,15 +258,40 @@ public class ScenarioFileManager {
 	private void setupSceneFiles(SceneData scene, int i) {
 		if(i<10) {
 			scene.setStoryPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
-			scene.setReinforcementContentPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT);
-			scene.setProjectedContentPath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
+			//manage path for reinforcement file, which is optional
+			String resourcePath = filePath+"_data/scene0"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT;
+			if(resourceFileExists(resourcePath))
+				scene.setReinforcementContentPath(resourcePath);
+			else
+				scene.setReinforcementContentPath(Constants.SCENE_DEFAULT_PATH_NAME);
+			//manage path for video file, which is optional
+			resourcePath = filePath+"_data/scene0"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT;
+			if(resourceFileExists(resourcePath))
+				scene.setProjectedContentPath(resourcePath);
+			else
+				scene.setProjectedContentPath(Constants.SCENE_DEFAULT_PATH_NAME);
 			scene.setObjectImagePath(filePath+"_data/scene0"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		} else {
 			scene.setStoryPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_STORY+"."+Constants.FILE_EXTENSION_STORY);
-			scene.setReinforcementContentPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT);
-			scene.setProjectedContentPath(filePath+"_data/scene"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT);
+			//manage path for reinforcement file, which is optional
+			String resourcePath = filePath+"_data/scene"+i+"/"+Constants.SCENE_REINFORCEMENT_CONTENT+"."+Constants.FILE_EXTENSION_REINFORCEMENT_CONTENT;
+			if(resourceFileExists(resourcePath))
+				scene.setReinforcementContentPath(resourcePath);
+			else
+				scene.setReinforcementContentPath(Constants.SCENE_DEFAULT_PATH_NAME);
+			//manage path for video file, which is optional
+			resourcePath = filePath+"_data/scene"+i+"/"+Constants.SCENE_PROJECTED_CONTENT+"."+Constants.FILE_EXTENSION_PROJECTED_CONTENT;
+			if(resourceFileExists(resourcePath))
+				scene.setProjectedContentPath(resourcePath);
+			else
+				scene.setProjectedContentPath(Constants.SCENE_DEFAULT_PATH_NAME);
 			scene.setObjectImagePath(filePath+"_data/scene"+i+"/"+Constants.SCENE_OBJECT_IMAGE+"."+Constants.FILE_EXTENSION_OBJECT_IMAGE);
 		}
+	}
+	
+	private boolean resourceFileExists(String path) {
+		File file = new File(path);
+		return file.exists();
 	}
 	
 	public int getMode() {
