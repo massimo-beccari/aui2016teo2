@@ -35,4 +35,6 @@ public interface UserInterface {
 	public void updateTimeSlider(int time, int sceneNumber);
 	
 	public void setStatusText(String text);
+	
+	public void highlightsCurrentScene(int sceneNumber);
 }

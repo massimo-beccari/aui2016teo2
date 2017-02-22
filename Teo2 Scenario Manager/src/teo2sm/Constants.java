@@ -43,4 +43,7 @@ public class Constants {
 	public static final String FILE_EXTENSION_PROJECTED_CONTENT = "mp4";
 	public static final String FILE_EXTENSION_OBJECT_IMAGE = "png";
 	public static final String WINDOW_TITLE = "Teo2 Scenario Manager";
+	public static final String REINFORCEMENT_AUDIO_FILE = "res/00_oh_no_cerca_ancora.MP3";
+	public static final String REINFORCEMENT_VIDEO_FILE = "res/00_Fantastico.mp4";
+	public static final String FINAL_VIDEO_FILE = "res/00_Grande.mp4";
 }

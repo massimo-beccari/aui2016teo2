@@ -31,6 +31,7 @@ public class Communicator implements CommInterface {
 	        is = streamConnection.openInputStream();
 	        br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 		} catch (IOException e) {
+			System.err.println("Error opening connection.");
 			e.printStackTrace();
 		}
     }

@@ -233,6 +233,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 				else
 					flagVideo = true;
 				//play next scene
+				app.getUI().highlightsCurrentScene(currentScene.getSeqNumber());
 				try {
 					storyController.play();
 				} catch (BasicPlayerException e1) {
@@ -241,6 +242,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			} else {
 				videoPlayer.setRepeat(false);
 				manageHughInteraction();
+				playVideoCongrats(Constants.FINAL_VIDEO_FILE);
 				//re initialization
 				reinitialize();
 			}
@@ -262,12 +264,13 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 				videoPlayer.playVideo();
 			}
 			playAudioReinforcement();
-			//TODO
 			System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: sending waitRfidObject command...");
 			objectTag = app.getCommunicator().waitRfidObject();
 		}
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: received RFID tag: "+objectTag);
+		playVideoCongrats(Constants.REINFORCEMENT_VIDEO_FILE);
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
+		videoPlayer.setRepeat(true);
 	}
 	
 	private void manageButtonInteraction() {
@@ -314,6 +317,19 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		}
 		reinforcementListener.setOpened(false);
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
+	}
+	
+	private void playVideoCongrats(String file) {
+		if(videoPlayer.isPlaying())
+			videoPlayer.stopVideo();
+		videoPlayer.setPaths(file, currentScene.getObjectImagePath());
+		videoPlayer.playVideo();
+		try {
+			Thread.sleep(5500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		videoPlayer.stopVideo();
 	}
 
 	public void setOpened(boolean opened) {

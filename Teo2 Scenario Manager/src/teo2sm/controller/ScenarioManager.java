@@ -16,6 +16,7 @@ public class ScenarioManager {
 	private BasicPlayer storyPlayer;
 	private BasicController storyController;
 	private PlayManager playManager;
+	private boolean iAmConnected;
 	
 	public ScenarioManager(AppRefs app, ScenarioData scenario) {
 		opened = true;
@@ -25,6 +26,7 @@ public class ScenarioManager {
 		storyPlayer = new BasicPlayer();
 		storyController = (BasicController) storyPlayer;
 		playManager = new PlayManager(app, this, scenario, storyController);
+		iAmConnected = false;
 	}
 	
 	public void manageScenario() {
@@ -39,6 +41,7 @@ public class ScenarioManager {
 	//load scenario in view
 	private void loadScenario() {
 		app.getUI().showScenes(scenario);
+		app.getUI().highlightsCurrentScene(1);
 		app.getUI().setTitle(" - "+scenario.getTitle());
 		app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
@@ -98,7 +101,8 @@ public class ScenarioManager {
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setOpenedScenario(Constants.SCENARIO_PLAYED);
 		app.getUI().setStatusText("Playing...");
-		app.getCommunicator().openConnection();
+		if(!iAmConnected)
+			connect();
 		if(playManager.getPosition() < 100)
 			storyController.play();
 		else
@@ -125,7 +129,7 @@ public class ScenarioManager {
 		app.getUI().setOpenedScenario(Constants.SCENARIO_OPENED);
 		app.getUI().setStatusText("Stopped.");
 		storyController.stop();
-		app.getCommunicator().closeConnection();
+		disconnect();
 	}
 	
 	//manage scenario save
@@ -138,6 +142,16 @@ public class ScenarioManager {
 			if(!outcome)
 				app.getUI().showCannotCreateFile(filePath);
 		}
+	}
+	
+	private void connect() {
+		app.getCommunicator().openConnection();
+		iAmConnected = true;
+	}
+	
+	private void disconnect() {
+		app.getCommunicator().closeConnection();
+		iAmConnected = false;
 	}
 
 	public void setPlaying(boolean isPlaying) {

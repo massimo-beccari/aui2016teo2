@@ -50,10 +50,12 @@ public class GUI implements UserInterface, Runnable {
 	private TimeSlider timeSlider;
 	private ArrayList<JLabel> sceneLabels;
 	private int displayedSceneNumber;
+	//private int currentHighlightedScene;
 	
 	public GUI() {
 		userBool = true;
 		userInt = Constants.DEFAULT_USERINT_VALUE;
+		//currentHighlightedScene = 0;
 		mainFrame = new JFrame(Constants.WINDOW_TITLE);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		layout = new SpringLayout();
@@ -403,6 +405,15 @@ public class GUI implements UserInterface, Runnable {
 	public void setStatusText(String text) {
 		statusLabel.setText(text);
 		statusPanel.updateUI();
+	}
+
+	@Override
+	public void highlightsCurrentScene(int sceneNumber) {
+		/*if(sceneNumber == 0)
+			sceneLabels.get(currentHighlightedScene).setBackground(null);
+		else
+			sceneLabels.get(sceneNumber).setBackground(Color.blue);
+		currentHighlightedScene = sceneNumber;*/
 	}
 
 	/*public static void main(String[] args) {

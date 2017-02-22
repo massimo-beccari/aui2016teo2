@@ -3,6 +3,7 @@ package teo2sm.controller.multimedia;
 import java.io.File;
 import java.util.Map;
 
+import teo2sm.Constants;
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
@@ -26,7 +27,7 @@ public class ReinforcementPlayerListener extends Thread implements BasicPlayerLi
 
 	private void init() {
 		try {
-			musicController.open(new File("res/00_oh_no_cerca_ancora.MP3"));
+			musicController.open(new File(Constants.REINFORCEMENT_AUDIO_FILE));
 		} catch (BasicPlayerException e) {
 			e.printStackTrace();
 		}
