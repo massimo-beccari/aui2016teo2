@@ -19,13 +19,13 @@ public class CommConstants {
 	public static final String COMMAND_EOL = "\r";
 	//rfid
 	public static final String COMM_CMD_RFID = "waitRfidObject";
-	public static final String COMM_CMD_BUTTON = "waitButtonInteraction";
-	public static final String COMM_CMD_FSR = "waitFsrInteraction";
-	public static final String COMM_CMD_MOOD_HAPPY = "setMoodHappy";
-	public static final String COMM_CMD_MOOD_SCARED = "setMoodScared";
-	public static final String COMM_CMD_MOOD_ANGRY = "setMoodAngry";
-	public static final String COMM_CMD_MOOD_SAD = "setMoodSad";
-	public static final String COMM_CMD_MOOD_NEUTRAL = "setMoodNeutral";
+	public static final String COMM_CMD_BUTTON = "waitButton";
+	public static final String COMM_CMD_FSR = "waitFsr";
+	public static final String COMM_CMD_MOOD_HAPPY = "happy";
+	public static final String COMM_CMD_MOOD_SCARED = "scared";
+	public static final String COMM_CMD_MOOD_ANGRY = "angry";
+	public static final String COMM_CMD_MOOD_SAD = "sad";
+	public static final String COMM_CMD_MOOD_NEUTRAL = "neutral";
 	//movement
 	public static final int MOV_OFF = 40;
 	public static final int MOV_VIBRATE = 41;

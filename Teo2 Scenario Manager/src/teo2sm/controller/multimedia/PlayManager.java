@@ -34,6 +34,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	private int position;
 	private boolean flagEndOfReproduction;
 	private boolean flagVideo;
+	private boolean flagReinforcement;
 	
 	public PlayManager(AppRefs app, ScenarioManager sm, ScenarioData scenario, BasicController storyController) {
 		this.app = app;
@@ -143,12 +144,13 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 
 	@Override
 	public void progress(int arg0, long arg1, byte[] arg2, @SuppressWarnings("rawtypes") Map prop) {
+		int relativePosition = ((int) (((long) prop.get("mp3.position.microseconds")) / 1000));
 		//position in milliseconds
-		position = (basePosition*1000) + ((int) (((long) prop.get("mp3.position.microseconds")) / 1000));
+		position = (basePosition*1000) + relativePosition;
 		app.getUI().updateTimeSlider(position/1000, currentScene.getSeqNumber());
 		//update Teo mood
-		if((currentAction != null) && ((int)(currentAction.getActionTime().toLong()) > position)) {
-			app.getCommunicator().setTeoMood(currentAction.getActionID());
+		if((currentAction != null) && ((int)(currentAction.getActionTime().toLong()) < relativePosition)) {
+			changeTeoMood(currentAction.getActionID());
 			if(actionIterator.hasNext())
 				currentAction = actionIterator.next();
 			else
@@ -162,6 +164,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	@Override
 	public void stateUpdated(BasicPlayerEvent e) {
 		if(e.getCode() == BasicPlayerEvent.PLAYING) {
+			changeTeoMood(CommConstants.COMM_CMD_MOOD_HAPPY);
 			videoPlayer.setFullscreen(true);
 			if(flagVideo)
 				videoPlayer.playVideo();
@@ -245,52 +248,80 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 	}
 	
 	private void manageObjectInteraction() {
+		app.getUI().setPlayableScenario(Constants.SCENARIO_CLOSED);
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: sending waitRfidObject command...");
 		String objectTag = app.getCommunicator().waitRfidObject();
+		System.out.println("??? "+objectTag);
 		if(flagVideo)
 			videoPlayer.stopVideo();
 		while(!objectTag.equals(currentScene.getRfidObjectTag())) {
+			System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: received WRONG RFID tag: "+objectTag);
+			changeTeoMood(CommConstants.COMM_CMD_MOOD_SAD);
 			if(!videoPlayer.isPlaying()) {
 				videoPlayer.setPaths(currentScene.getReinforcementContentPath(), currentScene.getObjectImagePath());
 				videoPlayer.playVideo();
 			}
 			playAudioReinforcement();
+			//TODO
+			System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: sending waitRfidObject command...");
 			objectTag = app.getCommunicator().waitRfidObject();
 		}
-		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: seceived RFID tag: "+objectTag);
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: received RFID tag: "+objectTag);
+		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 	}
 	
 	private void manageButtonInteraction() {
 		int interaction;
+		app.getUI().setPlayableScenario(Constants.SCENARIO_CLOSED);
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - Button: sending waitButtonInteraction command...");
 		do {
 			interaction = app.getCommunicator().waitButtonInteraction();
 		} while (interaction != CommConstants.COMM_BUTTON_GREY);
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - Button: received button interaction: "+interaction);
+		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 	}
 	
 	private void manageHughInteraction() {
 		int interaction;
+		app.getUI().setPlayableScenario(Constants.SCENARIO_CLOSED);
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - FSR: sending waitFsrInteraction command...");
 		do {
 			interaction = app.getCommunicator().waitFsrInteraction();
-		} while (interaction != CommConstants.COMM_FSR_HUG);
+		} while (/*interaction != CommConstants.COMM_FSR_HUG*/false);
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - FSR: received FSR interaction: "+interaction);
+		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
+	}
+	
+	private void changeTeoMood(String mood) {
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - Mood: sending "+mood+" command...");
+		app.getCommunicator().setTeoMood(mood);
+		System.out.println("Scene "+currentScene.getSeqNumber()+" - Mood: "+mood+" command sent.");
 	}
 	
 	private void playAudioReinforcement() {
-		/*BasicPlayer reinforcementPlayer = new BasicPlayer();
-		BasicController reinforcementController = (BasicController) reinforcementPlayer;
-		try {
-			reinforcementController.open(new File("res/reinforcement.mp3"));
-			reinforcementController.play();
-		} catch (BasicPlayerException e) {
-			e.printStackTrace();
-		}*/
+		BasicPlayer reinforcementPlayer = new BasicPlayer();
+		ReinforcementPlayerListener reinforcementListener = new ReinforcementPlayerListener(reinforcementPlayer, this);
+		flagReinforcement = true;
+		app.getUI().setPlayableScenario(Constants.SCENARIO_CLOSED);
+		reinforcementListener.start();
+		while(flagReinforcement) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				System.err.println("Error in thread sleep.");
+				e.printStackTrace();
+			}
+		}
+		reinforcementListener.setOpened(false);
+		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
 	}
 
 	public void setOpened(boolean opened) {
 		this.opened = opened;
+	}
+	
+	public void setReinforcement(boolean flag) {
+		flagReinforcement = flag;
 	}
 
 	public int getPosition() {

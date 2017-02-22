@@ -49,6 +49,7 @@ public class Communicator implements CommInterface {
     public int waitFsrInteraction() {
     	try {
 			os.write((CommConstants.COMM_CMD_FSR+CommConstants.COMMAND_EOL).getBytes());
+			os.flush();
 			String fsr = br.readLine();
 			if(fsr.equals("hug"))
 				return 20;
@@ -68,6 +69,7 @@ public class Communicator implements CommInterface {
 	public int waitButtonInteraction() {
 		try {
 			os.write((CommConstants.COMM_CMD_BUTTON+CommConstants.COMMAND_EOL).getBytes());
+			os.flush();
 			String button = br.readLine();
 			if(button.equals("button1"))
 				return 10;
@@ -83,6 +85,7 @@ public class Communicator implements CommInterface {
 	public String waitRfidObject() {
 		try {
 			os.write((CommConstants.COMM_CMD_RFID+CommConstants.COMMAND_EOL).getBytes());
+			os.flush();
 			String tag = br.readLine();
 			return tag;
 		} catch (IOException e) {
@@ -95,6 +98,7 @@ public class Communicator implements CommInterface {
 	public void setTeoMood(String code) {
 		try {
 			os.write((code+CommConstants.COMMAND_EOL).getBytes());
+			os.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -130,9 +134,10 @@ public class Communicator implements CommInterface {
 	public static void main(String[] args) {
 		Communicator comm = new Communicator();
 		comm.openConnection();
-		//System.out.println(comm.waitRfidObject());
+		System.out.println(comm.waitRfidObject());
 		//System.out.println(comm.waitFsrInteraction());
-		System.out.println(comm.waitButtonInteraction());
+		//System.out.println(comm.waitButtonInteraction());
+		//comm.setTeoMood(CommConstants.COMM_CMD_MOOD_ANGRY);
 		comm.closeConnection();
 	}
 }

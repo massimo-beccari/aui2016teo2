@@ -8,26 +8,25 @@ import javazoom.jlgui.basicplayer.BasicController;
 import javazoom.jlgui.basicplayer.BasicPlayerEvent;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
 import javazoom.jlgui.basicplayer.BasicPlayerListener;
-import teo2sm.model.SceneData;
 
-public class MusicPlayerListener extends Thread implements BasicPlayerListener {
-	private SceneData currentScene;
+public class ReinforcementPlayerListener extends Thread implements BasicPlayerListener {
+	private PlayManager manager;
 	private BasicPlayer musicPlayer;
 	private BasicController musicController;
 	private boolean opened;
 	
-	public MusicPlayerListener(SceneData scene, BasicPlayer musicPlayer) {
+	public ReinforcementPlayerListener(BasicPlayer musicPlayer, PlayManager manager) {
 		this.musicPlayer = musicPlayer;
 		this.musicController = (BasicController) musicPlayer;
 		this.musicPlayer.addBasicPlayerListener(this);
-	    currentScene = scene;
+		this.manager = manager;
 		opened = true;
 	    init();
 	}
 
 	private void init() {
 		try {
-			musicController.open(new File(currentScene.getReinforcementContentPath()));
+			musicController.open(new File("res/00_oh_no_cerca_ancora.MP3"));
 		} catch (BasicPlayerException e) {
 			e.printStackTrace();
 		}
@@ -35,6 +34,12 @@ public class MusicPlayerListener extends Thread implements BasicPlayerListener {
 	
 	@Override
 	public void run() {
+		try {
+			musicController.play();
+		} catch (BasicPlayerException e1) {
+			System.err.println("Error in playing reinforcement audio.");
+			e1.printStackTrace();
+		}
 		while(opened) {
 			try {
 				Thread.sleep(100);
@@ -57,21 +62,11 @@ public class MusicPlayerListener extends Thread implements BasicPlayerListener {
 	@Override
 	public void stateUpdated(BasicPlayerEvent e) {
 		if(e.getCode() == BasicPlayerEvent.EOM) {
-			try {
-				musicController.stop();
-				musicController.play();
-			} catch (BasicPlayerException e1) {
-				e1.printStackTrace();
-			}
+			manager.setReinforcement(false);
 		}
 	}
 
 	public void setOpened(boolean opened) {
 		this.opened = opened;
-	}
-
-	public void setCurrentScene(SceneData currentScene) {
-		this.currentScene = currentScene;
-		init();
 	}
 }
