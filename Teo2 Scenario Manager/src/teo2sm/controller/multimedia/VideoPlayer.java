@@ -47,7 +47,7 @@ public class VideoPlayer extends Thread {
         mediaPlayer = factory.newEmbeddedMediaPlayer();
         outputs = factory.getAudioOutputs();
         pcOut = outputs.get(5);
-        pcSpeakers = pcOut.getDevices().get(2);
+        pcSpeakers = pcOut.getDevices().get(4);
         mediaPlayer.setAudioOutput(pcOut.getName());
         mediaPlayer.setAudioOutputDevice(null, pcSpeakers.getDeviceId());
         videoSurface = factory.newVideoSurface(canvas);
@@ -137,4 +137,11 @@ public class VideoPlayer extends Thread {
 	public void switchToVideo() {
 		frame.setContentPane(contentPane);
 	}
+	
+	/*public static void main(String[] args) {
+		boolean found = new NativeDiscovery().discover();
+        System.out.println(found);
+        System.out.println(LibVlc.INSTANCE.libvlc_get_version());
+        VideoPlayer vp = new VideoPlayer("", "");
+	}*/
 }

@@ -95,7 +95,7 @@ public class NewScenarioWizardPage2 extends WizardPage {
 		videoLabel = new JLabel("Projected content video file:");
 		imageLabel = new JLabel("Object image file:");
 		tagLabel = new JLabel("RFID tag:");
-		actionsLabel = new JLabel("Teo actions:");
+		actionsLabel = new JLabel("Teo actions ( hour:min:sec:millis_mood, ... ) :");
 		storyText = new JTextField();
 		reinforcementText = new JTextField();
 		videoText = new JTextField();

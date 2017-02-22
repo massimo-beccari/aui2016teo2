@@ -166,7 +166,7 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		if(e.getCode() == BasicPlayerEvent.PLAYING) {
 			changeTeoMood(CommConstants.COMM_CMD_MOOD_HAPPY);
 			videoPlayer.setFullscreen(true);
-			if(currentScene.getSeqNumber() >= 2)
+			if(currentScene.getSeqNumber() >= 3)
 				videoPlayer.setRepeat(true);
 			if(flagVideo)
 				videoPlayer.playVideo();
@@ -188,7 +188,6 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		if(!flagEndOfReproduction) {
 			//video player settings
 			videoPlayer.setFullscreen(false);
-			videoPlayer.setRepeat(true);
 			if(flagVideo)
 				videoPlayer.stopVideo();
 			app.getUI().setPlayableScenario(Constants.SCENARIO_STOPPED);
