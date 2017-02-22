@@ -166,6 +166,8 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 		if(e.getCode() == BasicPlayerEvent.PLAYING) {
 			changeTeoMood(CommConstants.COMM_CMD_MOOD_HAPPY);
 			videoPlayer.setFullscreen(true);
+			if(currentScene.getSeqNumber() >= 2)
+				videoPlayer.setRepeat(true);
 			if(flagVideo)
 				videoPlayer.playVideo();
 		} else if(e.getCode() == BasicPlayerEvent.PAUSED) {
@@ -268,9 +270,9 @@ public class PlayManager extends Thread implements BasicPlayerListener {
 			objectTag = app.getCommunicator().waitRfidObject();
 		}
 		System.out.println("Scene "+currentScene.getSeqNumber()+" - RFID: received RFID tag: "+objectTag);
+		changeTeoMood(CommConstants.COMM_CMD_MOOD_HAPPY);
 		playVideoCongrats(Constants.REINFORCEMENT_VIDEO_FILE);
 		app.getUI().setPlayableScenario(Constants.SCENARIO_PLAYED);
-		videoPlayer.setRepeat(true);
 	}
 	
 	private void manageButtonInteraction() {
